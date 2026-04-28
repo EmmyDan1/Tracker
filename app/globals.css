@@ -1,26 +1,123 @@
 @import "tailwindcss";
+@reference "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --bg: #F5F4F1;
+    --bg-card: #FFFFFF;
+    --sidebar-bg: #0F0F0F;
+    --sidebar-text: #A8A8A8;
+    --sidebar-active: #FFFFFF;
+    --sidebar-active-bg: #1E1E1E;
+    --sidebar-border: #1E1E1E;
+
+    --text-primary: #0F0F0F;
+    --text-secondary: #6B6B6B;
+    --text-muted: #9E9E9E;
+
+    --accent: #E8FF47;
+    --accent-dark: #C8DB2A;
+    --accent-text: #0F0F0F;
+
+    --border: #E2E0DB;
+    --border-strong: #C8C5BE;
+
+    --radius: 6px;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: var(--font-syne), sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  code, pre, .mono {
+    font-family: var(--font-mono), monospace;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-syne), sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .sidebar-item {
+    @apply flex items-center gap-3 px-4 py-2.5 rounded-[4px] text-sm font-medium transition-all duration-150 cursor-pointer;
+    color: var(--sidebar-text);
+  }
+
+  .sidebar-item:hover {
+    color: var(--sidebar-active);
+    background: var(--sidebar-active-bg);
+  }
+
+  .sidebar-item.active {
+    color: var(--sidebar-active);
+    background: var(--sidebar-active-bg);
+    border-left: 2px solid var(--accent);
+    padding-left: calc(1rem - 2px);
+  }
+
+  .stat-card {
+    @apply bg-white border rounded-[var(--radius)] p-5;
+    border-color: var(--border);
+  }
+
+  .page-header {
+    @apply flex items-center justify-between mb-6;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-[var(--radius)] text-sm font-semibold transition-all duration-150;
+    background: var(--accent);
+    color: var(--accent-text);
+  }
+
+  .btn-primary:hover {
+    background: var(--accent-dark);
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-[var(--radius)] text-sm font-medium border transition-all duration-150;
+    border-color: var(--border-strong);
+    color: var(--text-primary);
+    background: white;
+  }
+
+  .btn-secondary:hover {
+    background: var(--bg);
+  }
+
+  .input-base {
+    @apply w-full px-3 py-2 rounded-[var(--radius)] text-sm outline-none transition-all border;
+    border-color: var(--border);
+    background: white;
+    color: var(--text-primary);
+  }
+
+  .input-base:focus {
+    border-color: var(--text-primary);
+    box-shadow: 0 0 0 2px rgba(15, 15, 15, 0.08);
+  }
+
+  .table-row {
+    @apply border-b last:border-0 hover:bg-stone-50 transition-colors;
+    border-color: var(--border);
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border;
+    font-family: var(--font-mono);
+  }
 }
