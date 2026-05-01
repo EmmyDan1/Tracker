@@ -6,11 +6,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-/**
- * Generate a unique tracking ID
- * Format: TRK-XXXXX
- * Example: TRK-48K2M
- */
 export function generateTrackingId(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
   const random = Array.from({ length: 5 }, () =>

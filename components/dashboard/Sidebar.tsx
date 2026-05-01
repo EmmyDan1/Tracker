@@ -31,16 +31,16 @@ export default function Sidebar({
     <>
       {/* Desktop sidebar */}
       <aside
-        className="hidden lg:flex flex-col w-56 shrink-0 h-screen"
+        className="hidden lg:flex flex-col w-56 shrink-0 h-screen sticky top-0"
         style={{
           background: 'var(--sidebar-bg)',
           borderRight: '1px solid var(--sidebar-border)',
         }}
       >
         {/* Logo */}
-        <div className="px-5 py-6 mb-2">
+        <div className="px-5 py-6">
           <span
-            className="text-base font-black tracking-tight"
+            className="text-lg font-black tracking-tight"
             style={{ color: 'var(--accent)' }}
           >
             TRACKER
@@ -49,7 +49,7 @@ export default function Sidebar({
 
         {/* Company name */}
         <div
-          className="px-5 pb-5 border-b mb-4"
+          className="px-5 pb-4 mb-2 border-b"
           style={{ borderColor: 'var(--sidebar-border)' }}
         >
           <p
@@ -125,10 +125,10 @@ export default function Sidebar({
               <Link
                 key={item.href}
                 href={item.href}
-                className="px-3 py-1.5 rounded text-xs font-medium transition-colors"
+                className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
                 style={{
                   color: isActive ? 'var(--accent)' : 'var(--sidebar-text)',
-                  background: isActive ? 'var(--sidebar-active-bg)' : 'transparent',
+                  background: isActive ? 'rgba(240,162,2,0.1)' : 'transparent',
                 }}
               >
                 {item.label}

@@ -1,9 +1,10 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { Delivery, DeliveryStatus, Rider } from '@/types'
+import EditDeliveryModal from './EditDeliveryModal'
+import DeleteDeliveryConfirm from './DeleteDeliveryConfirm'
 
 const NEXT_STATUS: Record<DeliveryStatus, DeliveryStatus | null> = {
   pending: 'picked_up',
@@ -24,24 +25,28 @@ const NEXT_LABEL: Record<DeliveryStatus, string> = {
 interface Props {
   delivery: Delivery
   riders: Rider[]
+  onUpdate: (updated: Delivery) => void
+  onDelete: (id: string) => void
 }
 
-export default function DeliveryActions({ delivery }: Props) {
-  const router = useRouter()
+export default function DeliveryActions({ delivery, riders, onUpdate, onDelete }: Props) {
   const [isPending, startTransition] = useTransition()
   const [copied, setCopied] = useState(false)
+  const [editOpen, setEditOpen] = useState(false)
+  const [deleteOpen, setDeleteOpen] = useState(false)
   const supabase = createClient()
 
   const nextStatus = NEXT_STATUS[delivery.status]
 
   async function advanceStatus() {
     if (!nextStatus) return
-    await supabase
+    const { data } = await supabase
       .from('deliveries')
       .update({ status: nextStatus })
       .eq('id', delivery.id)
-
-    startTransition(() => router.refresh())
+      .select('*, riders(name, phone, vehicle_type)')
+      .single()
+    if (data) startTransition(() => onUpdate(data))
   }
 
   function copyLink() {
@@ -52,32 +57,73 @@ export default function DeliveryActions({ delivery }: Props) {
   }
 
   return (
-    <div className="flex items-center gap-2">
-      {nextStatus && (
+    <>
+      <div className="flex items-center gap-2">
+        {nextStatus && (
+          <button
+            onClick={advanceStatus}
+            disabled={isPending}
+            className="text-xs px-2.5 py-1 rounded border font-medium transition-colors whitespace-nowrap"
+            style={{
+              borderColor: 'var(--border-strong)',
+              color: 'var(--text-primary)',
+              background: 'white',
+            }}
+          >
+            {isPending ? '...' : NEXT_LABEL[delivery.status]}
+          </button>
+        )}
         <button
-          onClick={advanceStatus}
-          disabled={isPending}
+          onClick={copyLink}
           className="text-xs px-2.5 py-1 rounded border font-medium transition-colors whitespace-nowrap"
           style={{
-            borderColor: 'var(--border-strong)',
-            color: 'var(--text-primary)',
+            borderColor: copied ? 'var(--accent-dark)' : 'var(--border)',
+            color: copied ? '#5a7a00' : 'var(--text-muted)',
+            background: copied ? '#FAFFF0' : 'white',
+          }}
+        >
+          {copied ? 'Copied' : 'Copy Link'}
+        </button>
+        <button
+          onClick={() => setEditOpen(true)}
+          className="text-xs px-2.5 py-1 rounded border font-medium transition-colors whitespace-nowrap"
+          style={{
+            borderColor: 'var(--border)',
+            color: 'var(--text-secondary)',
             background: 'white',
           }}
         >
-          {isPending ? '...' : NEXT_LABEL[delivery.status]}
+          Edit
         </button>
+        <button
+          onClick={() => setDeleteOpen(true)}
+          className="text-xs px-2.5 py-1 rounded border font-medium transition-colors whitespace-nowrap"
+          style={{
+            borderColor: '#fcc',
+            color: '#c0392b',
+            background: '#fff5f5',
+          }}
+        >
+          Delete
+        </button>
+      </div>
+
+      {editOpen && (
+        <EditDeliveryModal
+          delivery={delivery}
+          riders={riders}
+          onUpdate={onUpdate}
+          onClose={() => setEditOpen(false)}
+        />
       )}
-      <button
-        onClick={copyLink}
-        className="text-xs px-2.5 py-1 rounded border font-medium transition-colors whitespace-nowrap"
-        style={{
-          borderColor: copied ? 'var(--accent-dark)' : 'var(--border)',
-          color: copied ? '#5a7a00' : 'var(--text-muted)',
-          background: copied ? '#FAFFF0' : 'white',
-        }}
-      >
-        {copied ? 'Copied' : 'Copy Link'}
-      </button>
-    </div>
+
+      {deleteOpen && (
+        <DeleteDeliveryConfirm
+          delivery={delivery}
+          onDelete={onDelete}
+          onClose={() => setDeleteOpen(false)}
+        />
+      )}
+    </>
   )
 }

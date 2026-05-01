@@ -3,26 +3,31 @@
 
 @layer base {
   :root {
-    --bg: #F5F4F1;
-    --bg-card: #FFFFFF;
-    --sidebar-bg: #0F0F0F;
-    --sidebar-text: #A8A8A8;
-    --sidebar-active: #FFFFFF;
-    --sidebar-active-bg: #1E1E1E;
-    --sidebar-border: #1E1E1E;
+    --bg: #0A0A0A;
+    --sidebar-bg: #060606;
+    --card-bg: rgba(255, 255, 255, 0.04);
+    --card-border: rgba(255, 255, 255, 0.08);
+    --card-hover: rgba(255, 255, 255, 0.06);
 
-    --text-primary: #0F0F0F;
-    --text-secondary: #6B6B6B;
-    --text-muted: #9E9E9E;
+    --sidebar-border: rgba(255, 255, 255, 0.06);
+    --sidebar-text: rgba(255, 255, 255, 0.4);
+    --sidebar-active: #ffffff;
+    --sidebar-active-bg: rgba(255, 255, 255, 0.07);
 
-    --accent: #E8FF47;
-    --accent-dark: #C8DB2A;
-    --accent-text: #0F0F0F;
+    --text-primary: #FFFFFF;
+    --text-secondary: rgba(255, 255, 255, 0.55);
+    --text-muted: rgba(255, 255, 255, 0.3);
 
-    --border: #E2E0DB;
-    --border-strong: #C8C5BE;
+    --accent: #F0A202;
+    --accent-dark: #D4890A;
+    --accent-text: #0A0A0A;
+    --accent-glow: rgba(240, 162, 2, 0.2);
 
-    --radius: 6px;
+    --border: rgba(255, 255, 255, 0.07);
+    --border-strong: rgba(255, 255, 255, 0.12);
+
+    --radius: 8px;
+    --radius-lg: 16px;
   }
 
   * {
@@ -31,29 +36,43 @@
     padding: 0;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    font-family: var(--font-syne), sans-serif;
+    font-family: var(--font-inter), 'Inter', sans-serif;
     background: var(--bg);
     color: var(--text-primary);
     font-size: 14px;
     line-height: 1.5;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   code, pre, .mono {
-    font-family: var(--font-mono), monospace;
+    font-family: var(--font-mono), 'JetBrains Mono', monospace;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-syne), sans-serif;
+    font-family: var(--font-inter), 'Inter', sans-serif;
     font-weight: 700;
     letter-spacing: -0.02em;
     line-height: 1.1;
+    color: var(--text-primary);
+  }
+
+  select option {
+    background: #111111;
+    color: #ffffff;
   }
 }
 
 @layer utilities {
+  /* Sidebar */
   .sidebar-item {
-    @apply flex items-center gap-3 px-4 py-2.5 rounded-[4px] text-sm font-medium transition-all duration-150 cursor-pointer;
+    @apply flex items-center gap-3 px-4 py-2.5 rounded-[6px] text-sm font-medium transition-all duration-200 cursor-pointer;
     color: var(--sidebar-text);
   }
 
@@ -69,55 +88,119 @@
     padding-left: calc(1rem - 2px);
   }
 
+  /* Glass card */
   .stat-card {
-    @apply bg-white border rounded-[var(--radius)] p-5;
-    border-color: var(--border);
+    @apply transition-all duration-200;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
   }
 
+  .stat-card:hover {
+    background: var(--card-hover);
+    border-color: var(--border-strong);
+  }
+
+  .glass-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: var(--radius-lg);
+  }
+
+  /* Layout */
   .page-header {
     @apply flex items-center justify-between mb-6;
   }
 
+  /* Buttons */
   .btn-primary {
-    @apply inline-flex items-center gap-2 px-4 py-2 rounded-[var(--radius)] text-sm font-semibold transition-all duration-150;
+    @apply inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold transition-all duration-200;
     background: var(--accent);
     color: var(--accent-text);
+    border-radius: var(--radius);
+    box-shadow: 0 0 20px var(--accent-glow);
   }
 
   .btn-primary:hover {
     background: var(--accent-dark);
+    box-shadow: 0 0 30px var(--accent-glow);
+    transform: translateY(-1px);
   }
 
   .btn-secondary {
-    @apply inline-flex items-center gap-2 px-4 py-2 rounded-[var(--radius)] text-sm font-medium border transition-all duration-150;
-    border-color: var(--border-strong);
+    @apply inline-flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all duration-200;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-strong);
     color: var(--text-primary);
-    background: white;
+    border-radius: var(--radius);
   }
 
   .btn-secondary:hover {
-    background: var(--bg);
+    background: rgba(255, 255, 255, 0.09);
+    border-color: rgba(255, 255, 255, 0.2);
   }
 
+  /* Inputs */
   .input-base {
-    @apply w-full px-3 py-2 rounded-[var(--radius)] text-sm outline-none transition-all border;
-    border-color: var(--border);
-    background: white;
+    @apply w-full px-3 py-2.5 text-sm outline-none transition-all;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
     color: var(--text-primary);
+    border-radius: var(--radius);
+  }
+
+  .input-base::placeholder {
+    color: var(--text-muted);
   }
 
   .input-base:focus {
-    border-color: var(--text-primary);
-    box-shadow: 0 0 0 2px rgba(15, 15, 15, 0.08);
+    border-color: var(--accent);
+    background: rgba(255, 255, 255, 0.07);
+    box-shadow: 0 0 0 3px var(--accent-glow);
   }
 
+  /* Table */
   .table-row {
-    @apply border-b last:border-0 hover:bg-stone-50 transition-colors;
+    @apply border-b last:border-0 transition-colors duration-150;
     border-color: var(--border);
   }
 
+  .table-row:hover {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  /* Badge */
   .badge {
-    @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border;
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold;
     font-family: var(--font-mono);
+  }
+
+  /* Page wrapper for mobile padding */
+  .page-wrapper {
+    @apply pt-16 lg:pt-0 px-4 lg:px-0;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
   }
 }
