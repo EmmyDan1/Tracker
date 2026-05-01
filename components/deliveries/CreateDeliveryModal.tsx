@@ -120,12 +120,20 @@ export default function CreateDeliveryModal({ riders, onCreated }: Props) {
       {open && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{ background: "rgba(0,0,0,0.5)" }}
+          style={{
+            background: "rgba(0,0,0,0.80)",
+            backdropFilter: "blur(8px)",
+            WebkitBackdropFilter: "blur(8px)",
+          }}
           onClick={(e) => e.target === e.currentTarget && closeAndReset()}
         >
           <div
-            className="bg-bl rounded-[var(--radius)] w-full max-w-md max-h-[90vh] overflow-y-auto"
-            style={{ border: "1px solid var(--border)" }}
+            className="w-full max-w-md max-h-[90vh] overflow-y-auto"
+            style={{
+              background: "#0D0D0D",
+              border: "1px solid rgba(255,255,255,0.12)",
+              borderRadius: "16px",
+            }}
           >
             {/* Header */}
             <div

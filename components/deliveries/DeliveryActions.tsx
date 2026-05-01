@@ -67,7 +67,7 @@ export default function DeliveryActions({ delivery, riders, onUpdate, onDelete }
             style={{
               borderColor: 'var(--border-strong)',
               color: 'var(--text-primary)',
-              background: 'white',
+              background: '',
             }}
           >
             {isPending ? '...' : NEXT_LABEL[delivery.status]}
@@ -79,7 +79,7 @@ export default function DeliveryActions({ delivery, riders, onUpdate, onDelete }
           style={{
             borderColor: copied ? 'var(--accent-dark)' : 'var(--border)',
             color: copied ? '#5a7a00' : 'var(--text-muted)',
-            background: copied ? '#FAFFF0' : 'white',
+            background: copied ? '#FAFFF0' : '',
           }}
         >
           {copied ? 'Copied' : 'Copy Link'}
@@ -90,7 +90,7 @@ export default function DeliveryActions({ delivery, riders, onUpdate, onDelete }
           style={{
             borderColor: 'var(--border)',
             color: 'var(--text-secondary)',
-            background: 'white',
+            background: '',
           }}
         >
           Edit

@@ -1,55 +1,63 @@
-'use client'
+"use client";
 
-import { useState, useTransition } from 'react'
-import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase'
-import { VehicleType } from '@/types'
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase";
+import { VehicleType } from "@/types";
 
 const VEHICLE_OPTIONS: { value: VehicleType; label: string }[] = [
-  { value: 'bike', label: 'Bike' },
-  { value: 'car', label: 'Car' },
-  { value: 'van', label: 'Van' },
-]
+  { value: "bike", label: "Bike" },
+  { value: "car", label: "Car" },
+  { value: "van", label: "Van" },
+];
 
 export default function AddRiderModal() {
-  const router = useRouter()
-  const [open, setOpen] = useState(false)
-  const [isPending, startTransition] = useTransition()
-  const [error, setError] = useState('')
-  const [name, setName] = useState('')
-  const [phone, setPhone] = useState('')
-  const [vehicleType, setVehicleType] = useState<VehicleType>('bike')
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [vehicleType, setVehicleType] = useState<VehicleType>("bike");
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setError('')
-    const supabase = createClient()
+    e.preventDefault();
+    setError("");
+    const supabase = createClient();
 
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return;
 
     const { data: company } = await supabase
-      .from('companies')
-      .select('id')
-      .eq('email', user.email!)
-      .single()
+      .from("companies")
+      .select("id")
+      .eq("email", user.email!)
+      .single();
 
-    if (!company) { setError('Company not found.'); return }
+    if (!company) {
+      setError("Company not found.");
+      return;
+    }
 
-    const { error: err } = await supabase.from('riders').insert({
+    const { error: err } = await supabase.from("riders").insert({
       company_id: company.id,
       name: name.trim(),
       phone: phone.trim(),
       vehicle_type: vehicleType,
-    })
+    });
 
-    if (err) { setError(err.message); return }
+    if (err) {
+      setError(err.message);
+      return;
+    }
 
-    setName('')
-    setPhone('')
-    setVehicleType('bike')
-    setOpen(false)
-    startTransition(() => router.refresh())
+    setName("");
+    setPhone("");
+    setVehicleType("bike");
+    setOpen(false);
+    startTransition(() => router.refresh());
   }
 
   return (
@@ -61,23 +69,31 @@ export default function AddRiderModal() {
       {open && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{ background: 'rgba(0,0,0,0.5)' }}
+          style={{
+            background: "rgba(0,0,0,0.92)",
+            backdropFilter: "blur(8px)",
+            WebkitBackdropFilter: "blur(8px)",
+          }}
           onClick={(e) => e.target === e.currentTarget && setOpen(false)}
         >
           <div
-            className="bg-white rounded-[var(--radius)] w-full max-w-sm"
-            style={{ border: '1px solid var(--border)' }}
+            className="w-full max-w-sm"
+            style={{
+              background: "#0D0D0D",
+              border: "1px solid rgba(255,255,255,0.12)",
+              borderRadius: "16px",
+            }}
           >
             {/* Header */}
             <div
               className="flex items-center justify-between px-5 py-4 border-b"
-              style={{ borderColor: 'var(--border)' }}
+              style={{ borderColor: "var(--border)" }}
             >
               <h2 className="text-base font-bold">Add Agent</h2>
               <button
                 onClick={() => setOpen(false)}
                 className="text-xl leading-none"
-                style={{ color: 'var(--text-muted)' }}
+                style={{ color: "var(--text-muted)" }}
               >
                 ×
               </button>
@@ -88,7 +104,7 @@ export default function AddRiderModal() {
               <div className="space-y-1.5">
                 <label
                   className="text-xs font-semibold uppercase tracking-wider"
-                  style={{ color: 'var(--text-secondary)' }}
+                  style={{ color: 'var(--text-muted)' }}
                 >
                   Full Name
                 </label>
@@ -104,7 +120,7 @@ export default function AddRiderModal() {
               <div className="space-y-1.5">
                 <label
                   className="text-xs font-semibold uppercase tracking-wider"
-                  style={{ color: 'var(--text-secondary)' }}
+style={{ color: 'var(--text-muted)' }}
                 >
                   Phone Number
                 </label>
@@ -120,7 +136,7 @@ export default function AddRiderModal() {
               <div className="space-y-1.5">
                 <label
                   className="text-xs font-semibold uppercase tracking-wider"
-                  style={{ color: 'var(--text-secondary)' }}
+                  style={{ color: 'var(--text-muted)' }}
                 >
                   Vehicle Type
                 </label>
@@ -134,16 +150,16 @@ export default function AddRiderModal() {
                       style={{
                         borderColor:
                           vehicleType === v.value
-                            ? 'var(--text-primary)'
-                            : 'var(--border)',
+                            ? "var(--text-primary)"
+                            : "var(--border)",
                         background:
                           vehicleType === v.value
-                            ? 'var(--sidebar-bg)'
-                            : 'white',
+                            ? "var(--sidebar-bg)"
+                            : "white",
                         color:
                           vehicleType === v.value
-                            ? 'var(--accent)'
-                            : 'var(--text-secondary)',
+                            ? "var(--accent)"
+                            : "var(--text-secondary)",
                       }}
                     >
                       {v.label}
@@ -153,7 +169,14 @@ export default function AddRiderModal() {
               </div>
 
               {error && (
-                <p className="text-xs text-red-600 bg-red-50 px-3 py-2 rounded border border-red-100">
+                <p
+                  className="text-xs px-3 py-2 rounded-lg"
+                  style={{
+                    background: "rgba(230,57,70,0.1)",
+                    color: "#E63946",
+                    border: "1px solid rgba(230,57,70,0.2)",
+                  }}
+                >
                   {error}
                 </p>
               )}
@@ -171,7 +194,7 @@ export default function AddRiderModal() {
                   className="btn-primary flex-1 justify-center"
                   disabled={isPending}
                 >
-                  {isPending ? 'Adding...' : 'Add Agent'}
+                  {isPending ? "Adding..." : "Add Agent"}
                 </button>
               </div>
             </form>
@@ -179,5 +202,5 @@ export default function AddRiderModal() {
         </div>
       )}
     </>
-  )
+  );
 }
