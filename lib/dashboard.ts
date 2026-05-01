@@ -30,8 +30,7 @@ export async function getDashboardStats() {
     { label: 'Delivered Today', value: todayDeliveredCount ?? 0, sub: 'Completed today', accent: false },
     { label: 'In Transit', value: inTransitCount ?? 0, sub: 'Currently on the road', accent: false },
     { label: 'Pending', value: pendingCount ?? 0, sub: 'Awaiting pickup', accent: false },
-    { label: 'Total All Time', value: totalCount ?? 0, sub: 'All deliveries', accent: false },
-    { label: 'Delivered All Time', value: deliveredCount ?? 0, sub: 'All completed', accent: false },
+   
   ]
 
   return { stats, recentDeliveries: recentDeliveries ?? [] }
