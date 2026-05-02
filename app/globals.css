@@ -42,7 +42,7 @@
 
   body {
     font-family: var(--font-inter), 'Inter', sans-serif;
-    background: var(--bg);
+    background: var(--sidebar-bg);
     color: var(--text-primary);
     font-size: 14px;
     line-height: 1.5;
