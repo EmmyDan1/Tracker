@@ -30,7 +30,7 @@ export default function RecentDeliveries({ deliveries }: Props) {
 
       <div className="glass-card overflow-hidden">
         {deliveries.length === 0 ? (
-          <div className="py-16 text-center">
+          <div className="py- text-center">
             <p
               className="text-sm font-semibold mb-1"
               style={{ color: 'var(--text-primary)' }}
@@ -46,7 +46,7 @@ export default function RecentDeliveries({ deliveries }: Props) {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-xl">
               <thead>
                 <tr
                   style={{

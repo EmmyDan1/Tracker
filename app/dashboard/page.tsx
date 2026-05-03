@@ -7,7 +7,7 @@ export default async function DashboardPage() {
   const { stats, recentDeliveries } = await getDashboardStats();
 
   return (
-    <div className="pt-14 lg:pt-0">
+    <div className="pt-14 lg:pt-0 sidebar-bg">
       <div className="page-header">
         <div>
           <h1 className="text-2xl font-black">Overview</h1>
@@ -15,12 +15,12 @@ export default async function DashboardPage() {
             className="text-sm mt-0.5"
             style={{ color: "var(--text-secondary)" }}
           >
-            <p
-              className="text-sm mt-0.5"
+            <span
+              className="text-sm mt-0.5 block"
               style={{ color: "var(--text-secondary)" }}
             >
               {new Date().toISOString().split("T")[0]}
-            </p>
+            </span>
           </p>
         </div>
         <Link href="/dashboard/deliveries" className="btn-primary">

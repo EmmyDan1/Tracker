@@ -21,7 +21,7 @@ export default async function DashboardLayout({
     .single()
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ background: 'var(--bg)' }}>
+    <div className="flex h-screen overflow-hidden" >
       <Sidebar companyName={company?.name ?? 'Your Company'} userEmail={user.email!} />
       <main className="flex-1 overflow-y-auto">
         <div className="max-w-6xl mx-auto p-6 lg:p-8">

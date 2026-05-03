@@ -11,13 +11,13 @@ interface Props {
 
 export default function StatCards({ stats }: Props) {
   return (
-    <>
-      {/* Mobile — circles */}
+    
+      <section className="relative">
       <div className="grid grid-cols-2 gap-4 mb-8 lg:hidden">
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="flex flex-col items-center justify-center text-center aspect-square rounded-full transition-all duration-200"
+            className="flex flex-col items-center justify-center text-center aspect-square rounded-lg transition-all duration-200"
             style={
               stat.accent
                 ? {
@@ -53,6 +53,8 @@ export default function StatCards({ stats }: Props) {
             </p>
           </div>
         ))}
+
+            <div className="absolute bg-[#F0A202] rounded-full top-0 w-[30px] h-[30px]"></div>
       </div>
 
       {/* Desktop — cards */}
@@ -91,6 +93,7 @@ export default function StatCards({ stats }: Props) {
           </div>
         ))}
       </div>
-    </>
+    
+      </section>
   );
 }
