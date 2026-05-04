@@ -16,7 +16,7 @@
 
     --text-primary: #ffffff;
     --text-secondary: #a1a1aa;
-    --text-muted: #52525b;
+    --text-muted: #cacad8;
 
     --accent: #ffffff;
     --accent-dark: #e4e4e7;
@@ -40,11 +40,15 @@
     scroll-behavior: smooth;
   }
 
-body {
-    font-family: var(--font-geist-sans), 'Geist', sans-serif;
+  body {
+    font-family: var(--font-geist-sans), "Geist", sans-serif;
     background-color: var(--bg);
-    background-image: radial-gradient(circle, #ffffff 0.5px, transparent 0.5px);
-    background-size: 20px 20px;
+    background-image: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.08) 2px,
+      transparent 0.8px
+    );
+    background-size: 24px 24px;
     color: var(--text-primary);
     font-size: 14px;
     line-height: 1.5;

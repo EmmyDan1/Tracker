@@ -17,13 +17,13 @@ export default function StatCards({ stats }: Props) {
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="flex flex-col items-center justify-center text-center aspect-square rounded-lg transition-all duration-200"
+            className="flex flex-col items-center justify-center text-center aspect-square rounded-2xl transition-all duration-200"
             style={
               stat.accent
                 ? {
-                    borderColor: "rgba(240,162,2,0.4)",
-                    border: "1px solid rgba(240,162,2,0.4)",
-                    background: "rgba(240,162,2,0.08)",
+                    
+                    border: "1px solid #ffffff",
+                     background: "var(--card-bg)",
                   }
                 : {
                     border: "1px solid var(--card-border)",
@@ -35,12 +35,12 @@ export default function StatCards({ stats }: Props) {
           >
             <p
               className="text-xs font-semibold uppercase tracking-wider px-2"
-              style={{ color: "var(--text-muted)" }}
+              style={{ color: "var(--text-primary)" }}
             >
               {stat.label}
             </p>
             <p
-              className="text-3xl font-black mb-1"
+              className="text-5xl font-medium mb-1"
               style={{
                 letterSpacing: "-0.03em",
                 color: stat.accent ? "var(--accent)" : "var(--text-primary)",
@@ -54,7 +54,7 @@ export default function StatCards({ stats }: Props) {
           </div>
         ))}
 
-            <div className="absolute bg-[#F0A202] rounded-full top-0 w-[30px] h-[30px]"></div>
+            <div className="absolute bg-[#ffffff] rounded-full top-0 w-[30px] h-[30px]"></div>
       </div>
 
       {/* Desktop — cards */}
