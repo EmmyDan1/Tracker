@@ -8,6 +8,7 @@ const NAV = [
   { href: '/dashboard', label: 'Overview' },
   { href: '/dashboard/deliveries', label: 'Deliveries' },
   { href: '/dashboard/riders', label: 'Agents' },
+  { href: '/dashboard/settings', label: 'Settings' },
 ]
 
 export default function Sidebar({

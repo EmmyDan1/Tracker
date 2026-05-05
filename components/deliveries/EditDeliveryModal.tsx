@@ -1,5 +1,5 @@
 "use client";
-
+import { toast } from "sonner";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase";
 import { Delivery, Rider } from "@/types";
@@ -60,6 +60,7 @@ export default function EditDeliveryModal({
     if (data) {
       onUpdate(data);
       onClose();
+      toast.success("Delivery updated");
     }
   }
 
@@ -74,25 +75,21 @@ export default function EditDeliveryModal({
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
-        className="w-full max-w-md max-h-[10vh] overflow-y-auto"
+        className="w-full max-w-md max-h-[90vh] overflow-y-auto"
         style={{
-          background: "#111111",
-          border: "1px solid var(--border-strong)",
+          background: "#0D0D0D",
+          border: "1px solid rgba(255,255,255,0.12)",
           borderRadius: "16px",
         }}
       >
         <div
-          className="w-full max-w-md max-h-[90vh] overflow-y-auto"
-          style={{
-            background: "#0D0D0D",
-            border: "1px solid rgba(255,255,255,0.12)",
-            borderRadius: "16px",
-          }}
+          className="flex items-center justify-between px-5 py-4 border-b"
+          style={{ borderColor: "#2A2A2A" }}
         >
           <h2 className="text-base font-bold">Edit Delivery</h2>
           <button
             onClick={onClose}
-            className="text-xl leading-none"
+            className="text-xl leading-none transition-colors"
             style={{ color: "var(--text-muted)" }}
           >
             ×

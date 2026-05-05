@@ -1,5 +1,5 @@
 "use client";
-
+import { toast } from "sonner";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
@@ -25,6 +25,7 @@ export default function AgentActions({ rider }: Props) {
       router.refresh();
       setConfirm(false);
     });
+    toast.success(rider.is_active ? "Agent deactivated" : "Agent reactivated");
   }
 
   return (
@@ -62,10 +63,7 @@ export default function AgentActions({ rider }: Props) {
             <h2 className="text-base font-bold mb-2">
               {rider.is_active ? "Deactivate Agent" : "Reactivate Agent"}
             </h2>
-            <p
-              className="text-sm mb-1"
-            style={{ color: 'var(--text-muted)' }}
-            >
+            <p className="text-sm mb-1" style={{ color: "var(--text-muted)" }}>
               {rider.is_active
                 ? `${rider.name} will no longer appear in delivery assignments.`
                 : `${rider.name} will be available for delivery assignments again.`}

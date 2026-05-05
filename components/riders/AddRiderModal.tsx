@@ -1,5 +1,5 @@
 "use client";
-
+import { toast } from 'sonner'
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
@@ -58,6 +58,7 @@ export default function AddRiderModal() {
     setVehicleType("bike");
     setOpen(false);
     startTransition(() => router.refresh());
+    toast.success('Agent added successfully')
   }
 
   return (
@@ -146,7 +147,7 @@ style={{ color: 'var(--text-muted)' }}
                       key={v.value}
                       type="button"
                       onClick={() => setVehicleType(v.value)}
-                      className="py-3 px-2 rounded-[var(--radius)] border text-sm font-semibold transition-all"
+                      className="py-3 px-2 border text-sm font-semibold transition-all"
                       style={{
                         borderColor:
                           vehicleType === v.value

@@ -1,7 +1,10 @@
+"use client";
+import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { notFound } from "next/navigation";
 import { Delivery } from "@/types";
 import { STATUS_LABELS, STATUS_ORDER, formatDate } from "@/lib/utils";
+import { use } from "react";
 
 function createPublicClient() {
   return createClient(
@@ -10,27 +13,82 @@ function createPublicClient() {
   );
 }
 
-export default async function TrackingPage({
+export default function TrackingPage({
   params,
 }: {
   params: Promise<{ trackingId: string }>;
 }) {
-  const { trackingId } = await params;
-  const supabase = createPublicClient();
+  const { trackingId } = use(params);
+  const [delivery, setDelivery] = useState<
+    | (Delivery & {
+        riders?: { name: string; phone: string };
+        companies?: { name: string };
+        
+      })
+    | null
+  >(null);
+  const [notFoundState, setNotFoundState] = useState(false);
 
-  const { data: delivery } = await supabase
-    .from("deliveries")
-    .select("*, riders(name, phone), companies(name)")
-    .eq("tracking_id", trackingId.toUpperCase())
-    .single();
+  useEffect(() => {
+    const supabase = createPublicClient();
 
-  if (!delivery) notFound();
+    async function fetchDelivery() {
+      const { data } = await supabase
+        .from("deliveries")
+        .select(`*, riders(name, phone), companies(name)`)
+        .eq("tracking_id", trackingId.toUpperCase())
+        .single();
+
+      if (!data) {
+        setNotFoundState(true);
+        return;
+      }
+      setDelivery(data);
+    }
+
+    fetchDelivery();
+
+    // Realtime subscription
+    const channel = supabase
+      .channel("tracking-" + trackingId)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "deliveries",
+          filter: `tracking_id=eq.${trackingId.toUpperCase()}`,
+        },
+        (payload) => {
+          setDelivery((prev) =>
+            prev ? { ...prev, ...(payload.new as Partial<Delivery>) } : prev,
+          );
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [trackingId]);
+
+  if (notFoundState) notFound();
+  if (!delivery) {
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ background: "var(--bg)" }}
+      >
+        <p style={{ color: "var(--text-muted)" }}>Loading...</p>
+      </div>
+    );
+  }
 
   const d = delivery as Delivery & {
     riders?: { name: string; phone: string };
     companies?: { name: string };
   };
-
+  console.log(d);
   const currentStep = STATUS_ORDER.indexOf(d.status);
   const isCancelled = d.status === "cancelled";
 
@@ -47,12 +105,12 @@ export default async function TrackingPage({
         <div className="max-w-lg mx-auto px-4 py-4 flex items-center justify-between">
           <span
             className="text-sm font-black tracking-tight"
-            style={{ color: "var(--accent)" }}
+            style={{ color: "var(--text-primary)" }}
           >
             TRACKER
           </span>
           {d.companies?.name && (
-            <span className="text-xs" style={{ color: "var(--sidebar-text)" }}>
+            <span className="text-xs" style={{ color: "var(--text-muted)" }}>
               {d.companies.name}
             </span>
           )}
@@ -62,11 +120,10 @@ export default async function TrackingPage({
       <div className="max-w-lg mx-auto px-4 py-8 space-y-4">
         {/* Tracking ID */}
         <div
-          className="rounded-[var(--radius)] p-5"
+          className="rounded-xl p-5"
           style={{
-            background: "rgba(255,255,255,0.04)",
-            border: "1px solid rgba(255,255,255,0.08)",
-            borderRadius: "16px",
+            background: "var(--card-bg)",
+            border: "1px solid var(--border)",
           }}
         >
           <p
@@ -82,16 +139,40 @@ export default async function TrackingPage({
             Created {formatDate(d.created_at)}
           </p>
         </div>
+        {/* Cost Summary */}
+        {d.cost != null && (
+          <div
+            className="rounded-xl p-5"
+            style={{
+              background: "rgba(255,255,255,0.04)",
+              border: "1px solid var(--border)",
+            }}
+          >
+            <p
+              className="text-xs font-semibold uppercase tracking-wider mb-1"
+              style={{ color: "var(--text-muted)" }}
+            >
+              Total Cost
+            </p>
+            <p
+              className="text-2xl font-black"
+              style={{ color: "var(--text-primary)" }}
+            >
+              ₦{d.cost.toLocaleString()}
+            </p>
+          </div>
+        )}
 
         {/* Current status */}
         <div
-          className="rounded-[var(--radius)] p-5"
+          className="rounded-xl p-5"
           style={{
             background: isCancelled
               ? "rgba(230,57,70,0.08)"
-              : "rgba(240,162,2,0.08)",
-            border: `1px solid ${isCancelled ? "rgba(230,57,70,0.2)" : "rgba(240,162,2,0.2)"}`,
-            borderRadius: "16px",
+              : "rgba(255,255,255,0.06)",
+            border: `1px solid ${
+              isCancelled ? "rgba(230,57,70,0.2)" : "var(--border-strong)"
+            }`,
           }}
         >
           <p
@@ -102,7 +183,9 @@ export default async function TrackingPage({
           </p>
           <p
             className="text-2xl font-black"
-            style={{ color: isCancelled ? "#c0392b" : "var(--text-primary)" }}
+            style={{
+              color: isCancelled ? "#E63946" : "var(--text-primary)",
+            }}
           >
             {STATUS_LABELS[d.status]}
           </p>
@@ -111,8 +194,11 @@ export default async function TrackingPage({
         {/* Progress stepper */}
         {!isCancelled && (
           <div
-            className="rounded-[var(--radius)] p-5"
-            style={{ background: "white", border: "1px solid var(--border)" }}
+            className="rounded-xl p-5"
+            style={{
+              background: "var(--card-bg)",
+              border: "1px solid var(--border)",
+            }}
           >
             <p
               className="text-xs font-semibold uppercase tracking-wider mb-5"
@@ -129,13 +215,15 @@ export default async function TrackingPage({
                     <div
                       className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-xs font-black transition-all"
                       style={{
-                        background: done ? "var(--sidebar-bg)" : "var(--bg)",
+                        background: done
+                          ? "var(--text-primary)"
+                          : "transparent",
                         color: done
-                          ? current
-                            ? "var(--accent)"
-                            : "white"
+                          ? "var(--accent-text)"
                           : "var(--text-muted)",
-                        border: done ? "none" : "1.5px solid var(--border)",
+                        border: done
+                          ? "none"
+                          : "1.5px solid var(--border-strong)",
                       }}
                     >
                       {done && !current ? "✓" : idx + 1}
@@ -153,12 +241,11 @@ export default async function TrackingPage({
                       </p>
                       {current && (
                         <span
-                          className="text-xs font-bold px-2 py-0.5 rounded"
-                        style={{
-  background: 'var(--accent)',
-  color: '#0A0A0A',
-  fontWeight: '700',
-}}
+                          className="text-xs font-bold px-2 py-0.5 rounded-full"
+                          style={{
+                            background: "var(--text-primary)",
+                            color: "var(--accent-text)",
+                          }}
                         >
                           Now
                         </span>
@@ -173,8 +260,11 @@ export default async function TrackingPage({
 
         {/* Route */}
         <div
-          className="rounded-[var(--radius)] p-5"
-          style={{ background: "white", border: "1px solid var(--border)" }}
+          className="rounded-xl p-5"
+          style={{
+            background: "var(--card-bg)",
+            border: "1px solid var(--border)",
+          }}
         >
           <p
             className="text-xs font-semibold uppercase tracking-wider mb-4"
@@ -194,10 +284,7 @@ export default async function TrackingPage({
               />
               <div
                 className="w-2.5 h-2.5 rounded-full"
-                style={{
-                  background: "var(--accent)",
-                  border: "2px solid var(--accent-dark)",
-                }}
+                style={{ background: "var(--text-primary)" }}
               />
             </div>
             <div className="flex flex-col justify-between gap-4 flex-1">
@@ -208,7 +295,12 @@ export default async function TrackingPage({
                 >
                   Pickup
                 </p>
-                <p className="text-sm font-medium">{d.pickup_address}</p>
+                <p
+                  className="text-sm font-medium"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  {d.pickup_address}
+                </p>
               </div>
               <div>
                 <p
@@ -217,7 +309,12 @@ export default async function TrackingPage({
                 >
                   Delivery
                 </p>
-                <p className="text-sm font-medium">{d.delivery_address}</p>
+                <p
+                  className="text-sm font-medium"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  {d.delivery_address}
+                </p>
               </div>
             </div>
           </div>
@@ -226,8 +323,11 @@ export default async function TrackingPage({
         {/* Agent */}
         {d.riders && (
           <div
-            className="rounded-[var(--radius)] p-5"
-            style={{ background: "white", border: "1px solid var(--border)" }}
+            className="rounded-xl p-5"
+            style={{
+              background: "var(--card-bg)",
+              border: "1px solid var(--border)",
+            }}
           >
             <p
               className="text-xs font-semibold uppercase tracking-wider mb-3"
@@ -237,19 +337,24 @@ export default async function TrackingPage({
             </p>
             <div className="flex items-center gap-3">
               <div
-                className="w-10 h-10 rounded flex items-center justify-center font-black text-base"
+                className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-base"
                 style={{
-                  background: "var(--sidebar-bg)",
-                  color: "var(--accent)",
+                  background: "rgba(255,255,255,0.08)",
+                  color: "var(--text-primary)",
                 }}
               >
                 {d.riders.name.charAt(0)}
               </div>
               <div>
-                <p className="font-bold">{d.riders.name}</p>
+                <p
+                  className="font-bold"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  {d.riders.name}
+                </p>
                 <p
                   className="text-sm mono"
-                  style={{ color: "var(--text-secondary)" }}
+                  style={{ color: "var(--text-muted)" }}
                 >
                   {d.riders.phone}
                 </p>
@@ -261,8 +366,11 @@ export default async function TrackingPage({
         {/* Notes */}
         {d.notes && (
           <div
-            className="rounded-[var(--radius)] p-5"
-            style={{ background: "white", border: "1px solid var(--border)" }}
+            className="rounded-xl p-5"
+            style={{
+              background: "var(--card-bg)",
+              border: "1px solid var(--border)",
+            }}
           >
             <p
               className="text-xs font-semibold uppercase tracking-wider mb-1"

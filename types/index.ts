@@ -14,6 +14,7 @@ export interface Company {
   phone?: string
   city: string
   created_at: string
+  rate_per_km: number
 }
 
 export interface Rider {
@@ -41,6 +42,8 @@ export interface Delivery {
   updated_at: string
   delivered_at?: string
   riders?: Pick<Rider, 'name' | 'phone' | 'vehicle_type'>
+  distance_km?: number | null
+  cost?: number | null
 }
 
 export interface DashboardStats {

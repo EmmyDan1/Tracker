@@ -7,22 +7,41 @@ export async function getDashboardStats() {
   today.setHours(0, 0, 0, 0)
   const todayISO = today.toISOString()
 
+  const yesterday = new Date(today)
+  yesterday.setDate(yesterday.getDate() - 1)
+  const yesterdayISO = yesterday.toISOString()
+
   const [
-    { count: totalCount },
     { count: pendingCount },
     { count: inTransitCount },
-    { count: deliveredCount },
     { count: todayCount },
     { count: todayDeliveredCount },
     { data: recentDeliveries },
   ] = await Promise.all([
-    supabase.from('deliveries').select('*', { count: 'exact', head: true }),
-    supabase.from('deliveries').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
-    supabase.from('deliveries').select('*', { count: 'exact', head: true }).in('status', ['picked_up', 'in_transit']),
-    supabase.from('deliveries').select('*', { count: 'exact', head: true }).eq('status', 'delivered'),
-    supabase.from('deliveries').select('*', { count: 'exact', head: true }).gte('created_at', todayISO),
-    supabase.from('deliveries').select('*', { count: 'exact', head: true }).eq('status', 'delivered').gte('created_at', todayISO),
-    supabase.from('deliveries').select('*, riders(name)').order('created_at', { ascending: false }).limit(8),
+    supabase
+      .from('deliveries')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'pending'),
+    supabase
+      .from('deliveries')
+      .select('*', { count: 'exact', head: true })
+      .in('status', ['picked_up', 'in_transit']),
+    supabase
+      .from('deliveries')
+      .select('*', { count: 'exact', head: true })
+      .gte('created_at', todayISO),
+    supabase
+      .from('deliveries')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'delivered')
+      .gte('created_at', todayISO),
+    supabase
+      .from('deliveries')
+      .select('*, riders(name)')
+      .gte('created_at', yesterdayISO)
+      .lt('created_at', todayISO)
+      .order('created_at', { ascending: false })
+      .limit(20),
   ])
 
   const stats = [
@@ -30,7 +49,6 @@ export async function getDashboardStats() {
     { label: 'Delivered Today', value: todayDeliveredCount ?? 0, sub: 'Completed today', accent: false },
     { label: 'In Transit', value: inTransitCount ?? 0, sub: 'Currently on the road', accent: false },
     { label: 'Pending', value: pendingCount ?? 0, sub: 'Awaiting pickup', accent: false },
-   
   ]
 
   return { stats, recentDeliveries: recentDeliveries ?? [] }

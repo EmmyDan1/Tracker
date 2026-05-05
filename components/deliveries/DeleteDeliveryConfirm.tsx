@@ -1,5 +1,5 @@
 "use client";
-
+import { toast } from "sonner";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase";
 import { Delivery } from "@/types";
@@ -33,6 +33,7 @@ export default function DeleteDeliveryConfirm({
 
     onDelete(delivery.id);
     onClose();
+    toast.success("Delivery deleted");
   }
 
   return (
@@ -54,7 +55,7 @@ export default function DeleteDeliveryConfirm({
         }}
       >
         <h2 className="text-base font-bold mb-2">Delete Delivery</h2>
-        <p className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>
+        <p className="text-sm mb-1" style={{ color: "var(--text-muted)" }}>
           Are you sure you want to delete this delivery? This cannot be undone.
         </p>
         <p className="mono text-xs mb-6" style={{ color: "var(--text-muted)" }}>

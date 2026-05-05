@@ -1,9 +1,9 @@
-import Link from 'next/link'
-import { Delivery } from '@/types'
-import { STATUS_LABELS, STATUS_COLORS, formatDate } from '@/lib/utils'
+import Link from "next/link";
+import { Delivery } from "@/types";
+import { STATUS_LABELS, STATUS_COLORS, formatDate } from "@/lib/utils";
 
 interface Props {
-  deliveries: (Delivery & { riders?: { name: string } })[]
+  deliveries: (Delivery & { riders?: { name: string } })[];
 }
 
 export default function RecentDeliveries({ deliveries }: Props) {
@@ -11,18 +11,18 @@ export default function RecentDeliveries({ deliveries }: Props) {
     <div>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-base font-bold">
-          Recent Deliveries{' '}
+         
           <span
             className="text-xs font-normal"
-            style={{ color: 'var(--text-muted)' }}
+            style={{ color: "var(--text-muted)" }}
           >
-            — last 8
+            — previous day
           </span>
         </h2>
         <Link
           href="/dashboard/deliveries"
           className="text-xs font-medium transition-colors"
-          style={{ color: 'var(--accent)' }}
+          style={{ color: "var(--accent)" }}
         >
           View all →
         </Link>
@@ -33,14 +33,11 @@ export default function RecentDeliveries({ deliveries }: Props) {
           <div className="py- text-center">
             <p
               className="text-sm font-semibold mb-1"
-              style={{ color: 'var(--text-primary)' }}
+              style={{ color: "var(--text-primary)" }}
             >
               No deliveries yet
             </p>
-            <p
-              className="text-xs"
-              style={{ color: 'var(--text-muted)' }}
-            >
+            <p className="text-xs" style={{ color: "var(--text-muted)" }}>
               Create your first delivery to get started
             </p>
           </div>
@@ -50,19 +47,21 @@ export default function RecentDeliveries({ deliveries }: Props) {
               <thead>
                 <tr
                   style={{
-                    borderBottom: '1px solid var(--border)',
-                    background: 'rgba(255,255,255,0.02)',
+                    borderBottom: "1px solid var(--border)",
+                    background: "rgba(255,255,255,0.02)",
                   }}
                 >
-                  {['Tracking ID', 'Customer', 'Agent', 'Status', 'Date'].map((h) => (
-                    <th
-                      key={h}
-                      className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider"
-                      style={{ color: 'var(--text-muted)' }}
-                    >
-                      {h}
-                    </th>
-                  ))}
+                  {["Tracking ID", "Customer", "Agent", "Status", "Date"].map(
+                    (h) => (
+                      <th
+                        key={h}
+                        className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider"
+                        style={{ color: "var(--text-muted)" }}
+                      >
+                        {h}
+                      </th>
+                    ),
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -71,7 +70,7 @@ export default function RecentDeliveries({ deliveries }: Props) {
                     <td className="px-4 py-3">
                       <span
                         className="mono text-xs font-semibold"
-                        style={{ color: 'var(--accent)' }}
+                        style={{ color: "var(--accent)" }}
                       >
                         {d.tracking_id}
                       </span>
@@ -79,23 +78,23 @@ export default function RecentDeliveries({ deliveries }: Props) {
                     <td className="px-4 py-3">
                       <p
                         className="font-medium"
-                        style={{ color: 'var(--text-primary)' }}
+                        style={{ color: "var(--text-primary)" }}
                       >
                         {d.customer_name}
                       </p>
                       <p
                         className="text-xs"
-                        style={{ color: 'var(--text-muted)' }}
+                        style={{ color: "var(--text-muted)" }}
                       >
                         {d.customer_phone}
                       </p>
                     </td>
                     <td
                       className="px-4 py-3 text-sm"
-                      style={{ color: 'var(--text-secondary)' }}
+                      style={{ color: "var(--text-secondary)" }}
                     >
                       {d.riders?.name ?? (
-                        <span style={{ color: 'var(--text-muted)' }}>
+                        <span style={{ color: "var(--text-muted)" }}>
                           Unassigned
                         </span>
                       )}
@@ -107,7 +106,7 @@ export default function RecentDeliveries({ deliveries }: Props) {
                     </td>
                     <td
                       className="px-4 py-3 text-xs"
-                      style={{ color: 'var(--text-muted)' }}
+                      style={{ color: "var(--text-muted)" }}
                     >
                       {formatDate(d.created_at)}
                     </td>
@@ -119,5 +118,5 @@ export default function RecentDeliveries({ deliveries }: Props) {
         )}
       </div>
     </div>
-  )
+  );
 }
