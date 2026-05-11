@@ -16,12 +16,12 @@ export default function RecentDeliveries({ deliveries }: Props) {
             className="text-xs font-normal"
             style={{ color: "var(--text-muted)" }}
           >
-            — previous day
+            — Recent Deliveries
           </span>
         </h2>
         <Link
           href="/dashboard/deliveries"
-          className="text-xs font-medium transition-colors"
+          className="text-xs font-medium transition-colors border border-white/20 rounded-full px-6 py-2 hover:bg-white/10"
           style={{ color: "var(--accent)" }}
         >
           View all →
@@ -30,7 +30,7 @@ export default function RecentDeliveries({ deliveries }: Props) {
 
       <div className="glass-card overflow-hidden">
         {deliveries.length === 0 ? (
-          <div className="py- text-center">
+          <div className="py-12 text-center">
             <p
               className="text-sm font-semibold mb-1"
               style={{ color: "var(--text-primary)" }}

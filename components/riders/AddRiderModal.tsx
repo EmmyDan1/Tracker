@@ -1,5 +1,5 @@
 "use client";
-import { toast } from 'sonner'
+import { toast } from "sonner";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
@@ -41,11 +41,14 @@ export default function AddRiderModal() {
       return;
     }
 
+    const uniqueCode = Math.random().toString(36).substring(2, 10);
+
     const { error: err } = await supabase.from("riders").insert({
       company_id: company.id,
       name: name.trim(),
       phone: phone.trim(),
       vehicle_type: vehicleType,
+      unique_code: uniqueCode,
     });
 
     if (err) {
@@ -58,7 +61,7 @@ export default function AddRiderModal() {
     setVehicleType("bike");
     setOpen(false);
     startTransition(() => router.refresh());
-    toast.success('Agent added successfully')
+    toast.success("Agent added successfully");
   }
 
   return (
@@ -105,7 +108,7 @@ export default function AddRiderModal() {
               <div className="space-y-1.5">
                 <label
                   className="text-xs font-semibold uppercase tracking-wider"
-                  style={{ color: 'var(--text-muted)' }}
+                  style={{ color: "var(--text-muted)" }}
                 >
                   Full Name
                 </label>
@@ -121,7 +124,7 @@ export default function AddRiderModal() {
               <div className="space-y-1.5">
                 <label
                   className="text-xs font-semibold uppercase tracking-wider"
-style={{ color: 'var(--text-muted)' }}
+                  style={{ color: "var(--text-muted)" }}
                 >
                   Phone Number
                 </label>
@@ -137,7 +140,7 @@ style={{ color: 'var(--text-muted)' }}
               <div className="space-y-1.5">
                 <label
                   className="text-xs font-semibold uppercase tracking-wider"
-                  style={{ color: 'var(--text-muted)' }}
+                  style={{ color: "var(--text-muted)" }}
                 >
                   Vehicle Type
                 </label>

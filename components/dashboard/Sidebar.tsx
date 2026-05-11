@@ -73,7 +73,7 @@ export default function Sidebar({
               <Link
                 key={item.href}
                 href={item.href}
-                className={`sidebar-item ${isActive ? 'active' : ''}`}
+                className={`sidebar-item ${isActive ? 'active ' : '' }`}
               >
                 {item.label}
               </Link>

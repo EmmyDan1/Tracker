@@ -1,42 +1,44 @@
-import { Rider } from '@/types'
+import { Rider } from "@/types";
+
+import { DeliveryZone } from "@/types";
 
 interface Props {
   form: {
-    customer_name: string
-    customer_phone: string
-    pickup_address: string
-    delivery_address: string
-    rider_id: string
-    notes: string
-  }
-  riders: Rider[]
-  update: (key: string, val: string) => void
-  onSubmit: (e: React.FormEvent) => void
-  onClose: () => void
-  onAddressBlur: () => void
-  error: string
-  isPending: boolean
-  calculating: boolean
-  locationError: string
-  distance: number | null
-  cost: number | null
+    customer_name: string;
+    customer_phone: string;
+    pickup_address: string;
+    delivery_address: string;
+    rider_id: string;
+    notes: string;
+    zone_id: string;
+  };
+  riders: Rider[];
+  zones: DeliveryZone[];
+  update: (key: string, val: string) => void;
+  onSubmit: (e: React.FormEvent) => void;
+  onClose: () => void;
+  onAddressBlur: () => void;
+  error: string;
+  isPending: boolean;
+  calculating: boolean;
+  locationError: string;
+  distance: number | null;
+  cost: number | null;
 }
 
 export default function DeliveryForm({
   form,
   riders,
+  zones,
   update,
   onSubmit,
   onClose,
-  onAddressBlur,
+
   error,
   isPending,
-  calculating,
-  locationError,
-  distance,
-  cost,
+
 }: Props) {
-  const labelStyle = { color: 'var(--text-muted)' }
+  const labelStyle = { color: "var(--text-muted)" };
 
   return (
     <form onSubmit={onSubmit} className="p-5 space-y-4">
@@ -52,7 +54,7 @@ export default function DeliveryForm({
             className="input-base"
             placeholder="Funmi Adeyemi"
             value={form.customer_name}
-            onChange={(e) => update('customer_name', e.target.value)}
+            onChange={(e) => update("customer_name", e.target.value)}
             required
           />
         </div>
@@ -67,7 +69,7 @@ export default function DeliveryForm({
             className="input-base"
             placeholder="0801 234 5678"
             value={form.customer_phone}
-            onChange={(e) => update('customer_phone', e.target.value)}
+            onChange={(e) => update("customer_phone", e.target.value)}
             required
           />
         </div>
@@ -84,7 +86,7 @@ export default function DeliveryForm({
           className="input-base"
           placeholder="12 Ring Road, Challenge, Ibadan"
           value={form.pickup_address}
-          onChange={(e) => update('pickup_address', e.target.value)}
+          onChange={(e) => update("pickup_address", e.target.value)}
           required
         />
       </div>
@@ -100,63 +102,41 @@ export default function DeliveryForm({
           className="input-base"
           placeholder="45 Bodija Market Road, Ibadan"
           value={form.delivery_address}
-          onChange={(e) => update('delivery_address', e.target.value)}
-          onBlur={onAddressBlur}
+          onChange={(e) => update("delivery_address", e.target.value)}
           required
         />
       </div>
 
-      {calculating && (
-        <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-          Calculating distance...
-        </p>
-      )}
 
-      {locationError && !calculating && (
-        <p
-          className="text-xs px-3 py-2 rounded-lg"
-          style={{
-            background: 'rgba(230,57,70,0.1)',
-            color: '#E63946',
-            border: '1px solid rgba(230,57,70,0.2)',
-          }}
+      <div className="space-y-1.5">
+        <label
+          className="text-xs font-semibold uppercase tracking-wider"
+          style={labelStyle}
         >
-          {locationError}
-        </p>
-      )}
-
-      {distance !== null && cost !== null && !calculating && (
-        <div
-          className="rounded-[var(--radius)] p-3 flex items-center justify-between"
-          style={{
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid var(--border)',
-          }}
+          Delivery Zone
+        </label>
+        <select
+          className="input-base"
+          value={form.zone_id}
+          onChange={(e) => update("zone_id", e.target.value)}
         >
-          <div>
-            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-              Distance
-            </p>
-            <p
-              className="text-sm font-bold"
-              style={{ color: 'var(--text-primary)' }}
-            >
-              {distance} km
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-              Estimated Cost
-            </p>
-            <p
-              className="text-sm font-bold"
-              style={{ color: 'var(--text-primary)' }}
-            >
-              ₦{cost.toLocaleString()}
-            </p>
-          </div>
-        </div>
-      )}
+          <option value="">Select a zone (optional)</option>
+          {zones.map((z) => (
+            <option key={z.id} value={z.id}>
+              {z.name} — ₦{z.price.toLocaleString()}
+            </option>
+          ))}
+        </select>
+        {form.zone_id && zones.find((z) => z.id === form.zone_id) && (
+          <p
+            className="text-xs font-semibold"
+            style={{ color: "var(--text-primary)" }}
+          >
+            Cost: ₦
+            {zones.find((z) => z.id === form.zone_id)?.price.toLocaleString()}
+          </p>
+        )}
+      </div>
 
       <div className="space-y-1.5">
         <label
@@ -168,7 +148,7 @@ export default function DeliveryForm({
         <select
           className="input-base"
           value={form.rider_id}
-          onChange={(e) => update('rider_id', e.target.value)}
+          onChange={(e) => update("rider_id", e.target.value)}
         >
           <option value="">Select an agent (optional)</option>
           {riders.map((r) => (
@@ -191,7 +171,7 @@ export default function DeliveryForm({
           rows={2}
           placeholder="Fragile, call before delivery, etc."
           value={form.notes}
-          onChange={(e) => update('notes', e.target.value)}
+          onChange={(e) => update("notes", e.target.value)}
         />
       </div>
 
@@ -199,9 +179,9 @@ export default function DeliveryForm({
         <p
           className="text-xs px-3 py-2 rounded-lg"
           style={{
-            background: 'rgba(230,57,70,0.1)',
-            color: '#E63946',
-            border: '1px solid rgba(230,57,70,0.2)',
+            background: "rgba(230,57,70,0.1)",
+            color: "#E63946",
+            border: "1px solid rgba(230,57,70,0.2)",
           }}
         >
           {error}
@@ -221,9 +201,9 @@ export default function DeliveryForm({
           className="btn-primary flex-1 justify-center"
           disabled={isPending}
         >
-          {isPending ? 'Creating...' : 'Create Delivery'}
+          {isPending ? "Creating..." : "Create Delivery"}
         </button>
       </div>
     </form>
-  )
+  );
 }

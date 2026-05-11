@@ -1,3 +1,11 @@
+export interface DeliveryZone {
+  id: string
+  company_id: string
+  name: string
+  price: number
+  created_at: string
+}
+
 export type DeliveryStatus =
   | 'pending'
   | 'picked_up'
@@ -24,6 +32,7 @@ export interface Rider {
   phone: string
   vehicle_type: VehicleType
   is_active: boolean
+  unique_code?: string
   created_at: string
 }
 
@@ -38,12 +47,14 @@ export interface Delivery {
   delivery_address: string
   status: DeliveryStatus
   notes?: string
+  zone_id?: string
+  zone_name?: string
+  cost?: number
+  distance_km?: number
   created_at: string
   updated_at: string
   delivered_at?: string
   riders?: Pick<Rider, 'name' | 'phone' | 'vehicle_type'>
-  distance_km?: number | null
-  cost?: number | null
 }
 
 export interface DashboardStats {

@@ -2,13 +2,15 @@ export async function calculateDistance(
   pickup: string,
   delivery: string
 ): Promise<number | null> {
-  const apiKey = process.env.NEXT_PUBLIC_ORS_API_KEY
-  if (!apiKey) return null
+  const orsKey = process.env.NEXT_PUBLIC_ORS_API_KEY
+  const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
+
+  if (!orsKey || !mapboxToken) return null
 
   try {
     const [pickupCoords, deliveryCoords] = await Promise.all([
-      geocodeAddress(pickup, apiKey),
-      geocodeAddress(delivery, apiKey),
+      geocodeAddress(pickup, mapboxToken),
+      geocodeAddress(delivery, mapboxToken),
     ])
 
     console.log('Pickup coords:', pickupCoords)
@@ -21,7 +23,7 @@ export async function calculateDistance(
       {
         method: 'POST',
         headers: {
-          Authorization: apiKey,
+          Authorization: orsKey,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -38,8 +40,9 @@ export async function calculateDistance(
 
     if (!data.routes?.[0]?.summary?.distance) return null
 
- 
-const distanceKm = Math.round((data.routes[0].summary.distance / 1000) * 10) / 10
+    const distanceKm =
+      Math.round((data.routes[0].summary.distance / 1000) * 10) / 10
+
     return distanceKm
   } catch (err) {
     console.error('Distance calc error:', err)
@@ -49,16 +52,15 @@ const distanceKm = Math.round((data.routes[0].summary.distance / 1000) * 10) / 1
 
 async function geocodeAddress(
   address: string,
-  apiKey: string
+  token: string
 ): Promise<{ lat: number; lng: number } | null> {
   try {
-    // Try with just the address + Nigeria first
-    const encoded = encodeURIComponent(address + ', Nigeria')
+    const encoded = encodeURIComponent(address)
     const response = await fetch(
-      `https://api.openrouteservice.org/geocode/search?api_key=${apiKey}&text=${encoded}&size=1&boundary.country=NG&boundary.rect.min_lon=3.7&boundary.rect.min_lat=7.0&boundary.rect.max_lon=4.1&boundary.rect.max_lat=7.6`
+`https://api.mapbox.com/geocoding/v5/mapbox.places/${encoded}.json?access_token=${token}&country=ng&proximity=3.9209,7.3776&bbox=3.7,7.0,4.1,7.6&limit=1`
     )
     const data = await response.json()
-    console.log('Geocode result for:', address, data)
+    console.log('Mapbox geocode for:', address, data)
 
     if (!data.features?.[0]) return null
 

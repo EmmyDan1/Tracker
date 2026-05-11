@@ -15,6 +15,16 @@ export default function AgentActions({ rider }: Props) {
   const [confirm, setConfirm] = useState(false);
   const supabase = createClient();
 
+  async function handleDelete() {
+    const supabase = createClient();
+    await supabase.from("riders").delete().eq("id", rider.id);
+    toast.success("Agent deleted");
+    startTransition(() => {
+      router.refresh();
+      setConfirm(false);
+    });
+  }
+
   async function toggleActive() {
     await supabase
       .from("riders")
@@ -83,12 +93,21 @@ export default function AgentActions({ rider }: Props) {
                 Cancel
               </button>
               <button
+                onClick={handleDelete}
+                disabled={isPending}
+                className="flex-1 justify-center inline-flex items-center px-4 py-2 rounded-[var(--radius)] text-sm font-semibold"
+                style={{ background: "#c0392b", color: "white" }}
+              >
+                {isPending ? "Deleting..." : "Delete Agent"}
+              </button>
+              <button
                 onClick={toggleActive}
                 disabled={isPending}
                 className="flex-1 justify-center inline-flex items-center px-4 py-2 rounded-[var(--radius)] text-sm font-semibold"
                 style={{
-                  background: rider.is_active ? "#c0392b" : "#2a7a2a",
+                  background: rider.is_active ? "#1a1a1a" : "#2a7a2a",
                   color: "white",
+                  border: "1px solid rgba(255,255,255,0.1)",
                 }}
               >
                 {isPending

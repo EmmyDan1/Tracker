@@ -23,7 +23,6 @@ export default function TrackingPage({
     | (Delivery & {
         riders?: { name: string; phone: string };
         companies?: { name: string };
-        
       })
     | null
   >(null);
@@ -35,10 +34,10 @@ export default function TrackingPage({
     async function fetchDelivery() {
       const { data } = await supabase
         .from("deliveries")
-        .select(`*, riders(name, phone), companies(name)`)
+        .select("*, riders(name, phone), companies(name)")
         .eq("tracking_id", trackingId.toUpperCase())
         .single();
-
+      console.log("Polling fetch result:", data?.status);
       if (!data) {
         setNotFoundState(true);
         return;
@@ -46,29 +45,14 @@ export default function TrackingPage({
       setDelivery(data);
     }
 
+    // Initial fetch
     fetchDelivery();
 
-    // Realtime subscription
-    const channel = supabase
-      .channel("tracking-" + trackingId)
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "deliveries",
-          filter: `tracking_id=eq.${trackingId.toUpperCase()}`,
-        },
-        (payload) => {
-          setDelivery((prev) =>
-            prev ? { ...prev, ...(payload.new as Partial<Delivery>) } : prev,
-          );
-        },
-      )
-      .subscribe();
+    // Poll every 5 seconds
+    const interval = setInterval(fetchDelivery, 5000);
 
     return () => {
-      supabase.removeChannel(channel);
+      clearInterval(interval);
     };
   }, [trackingId]);
 

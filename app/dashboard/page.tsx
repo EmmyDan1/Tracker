@@ -5,12 +5,13 @@ import RecentDeliveries from "@/components/dashboard/RecentDeliveries";
 
 export default async function DashboardPage() {
   const { stats, recentDeliveries } = await getDashboardStats();
+  console.log("Dashboard deliveries:", recentDeliveries);
 
   return (
     <div className="pt-14 lg:pt-0 sidebar-bg">
       <div className="page-header">
         <div>
-          <h1 className="text-2xl font-black">Overview</h1>
+          <h1 className="text-[27px] font-black " style={{color: "var(--alt-bg)"}}>Overview</h1>
           <p
             className="text-sm mt-0.5"
             style={{ color: "var(--text-secondary)" }}
@@ -29,6 +30,7 @@ export default async function DashboardPage() {
       </div>
 
       <StatCards stats={stats} />
+      
       <RecentDeliveries deliveries={recentDeliveries} />
     </div>
   );

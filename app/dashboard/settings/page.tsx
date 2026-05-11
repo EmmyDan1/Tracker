@@ -1,16 +1,23 @@
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import SettingsForm from '@/components/settings/settingsForm'
+import ZoneManager from '@/components/settings/ZoneManager'
 
 export default async function SettingsPage() {
   const supabase = await createServerSupabaseClient()
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  const { data: company } = await supabase
-    .from('companies')
-    .select('*')
-    .eq('email', user!.email!)
-    .single()
+  const [{ data: company }, { data: zones }] = await Promise.all([
+    supabase
+      .from('companies')
+      .select('*')
+      .eq('email', user!.email!)
+      .single(),
+    supabase
+      .from('delivery_zones')
+      .select('*')
+      .order('created_at', { ascending: true }),
+  ])
 
   return (
     <div className="page-wrapper">
@@ -26,7 +33,13 @@ export default async function SettingsPage() {
         </div>
       </div>
 
-      <SettingsForm company={company} />
+      <div className="max-w-md space-y-4">
+        <SettingsForm company={company} />
+        <ZoneManager
+          companyId={company?.id ?? ''}
+          initialZones={zones ?? []}
+        />
+      </div>
     </div>
   )
 }
