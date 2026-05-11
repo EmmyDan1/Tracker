@@ -38,7 +38,7 @@ export default function AddressInput({
     setLoading(true);
     try {
       const response = await fetch(
-        `https://api.mapbox.com/search/searchbox/v1/suggest?q=${encodeURIComponent(query + ", Ibadan, Nigeria")}&language=en&country=ng&proximity=3.9209,7.3776&session_token=tracker-session&access_token=${token}`,
+        `https://api.mapbox.com/search/searchbox/v1/suggest?q=${encodeURIComponent(query + ", Ibadan, Nigeria")}&language=en&country=ng&proximity=3.9209,7.3776&session_token=Shippa-session&access_token=${token}`,
       );
       const data = await response.json();
       setSuggestions(data.suggestions ?? []);

@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import Sidebar from '@/components/dashboard/Sidebar'
+import AIChat from '@/components/dashboard/AIChat'
 
 export default async function DashboardLayout({
   children,
@@ -27,6 +28,7 @@ export default async function DashboardLayout({
         <div className="max-w-6xl mx-auto p-6 lg:p-8">
           {children}
         </div>
+        <AIChat />
       </main>
     </div>
   )

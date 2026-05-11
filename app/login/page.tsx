@@ -49,7 +49,7 @@ export default function LoginPage() {
               className="text-xl font-black tracking-tight"
               style={{ color: 'var(--accent)' }}
             >
-              TRACKER
+              Shippa
             </span>
           </div>
 
@@ -119,7 +119,7 @@ export default function LoginPage() {
               className="text-lg font-black tracking-tight"
               style={{ color: 'var(--accent)' }}
             >
-              TRACKER
+              Shippa
             </span>
           </div>
 

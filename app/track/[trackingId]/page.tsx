@@ -91,7 +91,7 @@ export default function TrackingPage({
             className="text-sm font-black tracking-tight"
             style={{ color: "var(--text-primary)" }}
           >
-            TRACKER
+            Shippa
           </span>
           {d.companies?.name && (
             <span className="text-xs" style={{ color: "var(--text-muted)" }}>
@@ -372,7 +372,7 @@ export default function TrackingPage({
           className="text-center text-xs pb-4"
           style={{ color: "var(--text-muted)" }}
         >
-          Powered by <span className="font-bold">Tracker</span>
+          Powered by <span className="font-bold">Shippa</span>
         </p>
       </div>
     </div>

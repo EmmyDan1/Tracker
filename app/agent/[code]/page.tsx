@@ -67,7 +67,7 @@ export default function AgentPortalPage({
             className="text-sm font-black tracking-tight"
             style={{ color: 'var(--text-primary)' }}
           >
-            TRACKER
+            Shippa
           </span>
           <span
             className="text-xs px-2.5 py-1 rounded-full font-medium"
@@ -141,7 +141,7 @@ export default function AgentPortalPage({
         >
           Powered by{' '}
           <span className="font-bold" style={{ color: 'var(--text-primary)' }}>
-            Tracker
+            Shippa
           </span>
         </p>
       </div>

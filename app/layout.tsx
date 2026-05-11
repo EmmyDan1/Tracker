@@ -5,7 +5,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "Tracker — Logistics Management",
+  title: "Shippa — Logistics Management",
   description:
     "Manage agents, deliveries, and tracking for your logistics company.",
 };
