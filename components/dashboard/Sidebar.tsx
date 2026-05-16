@@ -137,7 +137,6 @@ export default function Sidebar({
           </button>
         </div>
       </aside>
-
       {/* Mobile top bar */}
       <div
         className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3"
@@ -146,12 +145,54 @@ export default function Sidebar({
           borderBottom: "1px solid var(--sidebar-border)",
         }}
       >
-        <span
-          className="text-sm font-black tracking-tight"
-          style={{ color: "var(--accent)" }}
-        >
-          Shippa
-        </span>
+        {/* Logo + bike together */}
+        <div className="flex items-center gap-1.5">
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            style={{ color: "var(--accent)" }}
+          >
+            <circle
+              cx="5.5"
+              cy="17.5"
+              r="3.5"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            />
+            <circle
+              cx="18.5"
+              cy="17.5"
+              r="3.5"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            />
+            <path
+              d="M5.5 17.5L9 10L13 12L15.5 7H19"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M13 12L18.5 17.5"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
+            <circle cx="15.5" cy="7" r="1" fill="currentColor" />
+          </svg>
+          <span
+            className="text-sm font-black tracking-tight"
+            style={{ color: "var(--accent)" }}
+          >
+            Shippa
+          </span>
+        </div>
+
+        {/* Nav */}
         <nav className="flex items-center gap-1">
           {NAV.map((item) => {
             const isActive =
