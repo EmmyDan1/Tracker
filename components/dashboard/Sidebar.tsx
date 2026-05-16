@@ -139,7 +139,7 @@ export default function Sidebar({
       </aside>
       {/* Mobile top bar */}
       <div
-        className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3"
+        className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-6"
         style={{
           background: "var(--sidebar-bg)",
           borderBottom: "1px solid var(--sidebar-border)",
