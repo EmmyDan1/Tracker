@@ -43,9 +43,38 @@ export default function CreateDeliveryModal({
 
   return (
     <>
-      <button className="btn-primary" onClick={() => setOpen(true)}>
-        New Delivery
-      </button>
+    <button
+  onClick={() => setOpen(true)}
+  className="
+    group
+    relative
+    inline-flex
+    items-center
+    justify-center
+
+    w-full sm:w-auto
+
+    rounded-2xl
+
+    bg-zinc-900
+    text-white
+
+    px-5 py-3
+
+    text-sm font-medium
+
+    transition-all duration-300
+
+    hover:bg-zinc-800
+    hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)]
+  "
+>
+  New Delivery
+
+  <span className="ml-2 text-white/50 group-hover:text-white/80 transition">
+    →
+  </span>
+</button>
 
       {open && (
         <div

@@ -35,47 +35,69 @@ export default function DeliveriesPage() {
   )
 
   return (
-    <div className="page-wrapper">
-      <div className="page-header">
-        <div>
-          <h1 className="text-2xl font-black">Deliveries</h1>
-          <p
-            className="text-sm mt-0.5"
-            style={{ color: 'var(--text-secondary)' }}
-          >
-            {deliveries.length} total deliveries
-          </p>
-        </div>
-        <CreateDeliveryModal
-          riders={riders}
-          zones={zones}
-          onCreated={handleCreated}
-        />
-      </div>
+<div className="page-wrapper space-y-8">
 
-      <DeliveryFilters
-        filter={filter}
-        search={search}
-        deliveryCount={deliveries.length}
-        counts={counts}
-        onFilterChange={handleFilterChange}
-        onSearchChange={handleSearchChange}
-      />
+  {/* HEADER */}
+  <div className="page-header flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 
-      <DeliveryTable
-        deliveries={paginated}
+    <div className="space-y-1.5">
+
+      <h1 className="text-2xl font-black tracking-[-0.04em]">
+        Deliveries
+      </h1>
+
+      <p
+        className="text-sm"
+        style={{ color: 'var(--text-secondary)' }}
+      >
+        <span className="font-medium text-[13px]">
+          {deliveries.length}
+        </span>{' '}
+        total deliveries
+      </p>
+
+    </div>
+
+    <div className="w-full sm:w-auto">
+      <CreateDeliveryModal
         riders={riders}
-        loading={loading}
-        filter={filter}
-        page={page}
-        totalPages={totalPages}
-        total={filtered.length}
-        perPage={PER_PAGE}
-        onNext={() => setPage((p) => Math.min(totalPages, p + 1))}
-        onPrev={() => setPage((p) => Math.max(1, p - 1))}
-        onUpdate={handleUpdate}
-        onDelete={handleDelete}
+        zones={zones}
+        onCreated={handleCreated}
       />
     </div>
+
+  </div>
+
+  {/* FILTERS */}
+  <div className="pt-1">
+    <DeliveryFilters
+      filter={filter}
+      search={search}
+      deliveryCount={deliveries.length}
+      counts={counts}
+      onFilterChange={handleFilterChange}
+      onSearchChange={handleSearchChange}
+    />
+  </div>
+
+  {/* TABLE */}
+  <div className="pt-1">
+    <DeliveryTable
+      deliveries={paginated}
+      riders={riders}
+      loading={loading}
+      filter={filter}
+      page={page}
+      totalPages={totalPages}
+      total={filtered.length}
+      perPage={PER_PAGE}
+      onNext={() => setPage((p) => Math.min(totalPages, p + 1))}
+      onPrev={() => setPage((p) => Math.max(1, p - 1))}
+      onUpdate={handleUpdate}
+      onDelete={handleDelete}
+    />
+  </div>
+
+</div>
   )
 }
