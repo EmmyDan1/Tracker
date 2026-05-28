@@ -37,10 +37,14 @@ export default function DeliveryTable({
   return (
     <div className="glass-card overflow-hidden">
       {loading ? (
-        <div className="py-20 text-center">
-          <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-            Loading deliveries...
-          </p>
+        <div className="space-y-2 p-4">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div
+              key={i}
+              className="h-12 rounded-lg animate-pulse"
+              style={{ background: "rgba(255,255,255,0.04)" }}
+            />
+          ))}
         </div>
       ) : deliveries.length === 0 ? (
         <div className="py-20 text-center">

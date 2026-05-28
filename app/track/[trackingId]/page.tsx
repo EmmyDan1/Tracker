@@ -49,7 +49,7 @@ export default function TrackingPage({
     fetchDelivery();
 
     // Poll every 5 seconds
-    const interval = setInterval(fetchDelivery, 5000);
+    const interval = setInterval(fetchDelivery, 30000)
 
     return () => {
       clearInterval(interval);

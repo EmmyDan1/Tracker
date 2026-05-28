@@ -129,15 +129,17 @@ export function useDeliveryForm(
       rider_id: form.rider_id || null,
       notes: form.notes || null,
       status: "pending",
-      zone_id: form.zone_id || null,
-      zone_name: selectedZone?.name || null,
-      cost: selectedZone?.price || null,
-    });
 
+      cost: cost || null,
+    });
+   
     if (insertError) {
+      console.error("Insert error:", insertError);
       setError(insertError.message);
       return;
     }
+
+    console.log("Insert successful");
     console.log("Rider ID at send time:", form.rider_id);
     if (form.rider_id) {
       fetch("/api/push/send", {
@@ -159,7 +161,8 @@ export function useDeliveryForm(
     if (onCreated) onCreated();
     startTransition(() => {});
   }
-
+  console.log("Cost at insert:", cost);
+  console.log("Distance at insert:", distance);
   function copyLink() {
     const url = `${window.location.origin}/track/${createdTrackingId}`;
     navigator.clipboard.writeText(url);

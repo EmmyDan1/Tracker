@@ -3,6 +3,7 @@ import { getDashboardStats } from "@/lib/dashboard"
 import StatCards from "@/components/dashboard/StatCards"
 import RecentDeliveries from "@/components/dashboard/RecentDeliveries"
 import AIBriefing from "@/components/dashboard/AIBriefing"
+export const revalidate = 30
 
 export default async function DashboardPage() {
   const { stats, recentDeliveries } = await getDashboardStats()

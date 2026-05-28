@@ -1,7 +1,8 @@
 import { redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import Sidebar from '@/components/dashboard/Sidebar'
-import AIChat from '@/components/dashboard/AIChat'
+import AIChat from '@/components/dashboard/AIChat';
+export const runtime = 'edge'
 
 export default async function DashboardLayout({
   children,
