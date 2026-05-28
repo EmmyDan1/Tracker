@@ -1,6 +1,7 @@
 import { Rider } from "@/types";
 
 import { DeliveryZone } from "@/types";
+import AddressAutocomplete from "../ui/AddressAutoComplete";
 
 interface Props {
   form: {
@@ -13,6 +14,8 @@ interface Props {
     zone_id: string;
   };
   riders: Rider[];
+  onPickupCoords: (lat: number, lng: number) => void;
+  onDeliveryCoords: (lat: number, lng: number) => void;
   zones: DeliveryZone[];
   update: (key: string, val: string) => void;
   onSubmit: (e: React.FormEvent) => void;
@@ -33,10 +36,15 @@ export default function DeliveryForm({
   update,
   onSubmit,
   onClose,
-
+  onAddressBlur,
+  onPickupCoords,
+  onDeliveryCoords,
   error,
   isPending,
-
+  cost,
+  distance,
+  calculating,
+  locationError,
 }: Props) {
   const labelStyle = { color: "var(--text-muted)" };
 
@@ -82,11 +90,13 @@ export default function DeliveryForm({
         >
           Pickup Address
         </label>
-        <input
-          className="input-base"
-          placeholder="12 Ring Road, Challenge, Ibadan"
+        <AddressAutocomplete
           value={form.pickup_address}
-          onChange={(e) => update("pickup_address", e.target.value)}
+          onChange={(val, lat, lng) => {
+            update("pickup_address", val);
+            if (lat && lng) onPickupCoords(lat, lng);
+          }}
+          placeholder="Start typing pickup address..."
           required
         />
       </div>
@@ -98,17 +108,21 @@ export default function DeliveryForm({
         >
           Delivery Address
         </label>
-        <input
-          className="input-base"
-          placeholder="45 Bodija Market Road, Ibadan"
+        <AddressAutocomplete
           value={form.delivery_address}
-          onChange={(e) => update("delivery_address", e.target.value)}
+          onChange={(val, lat, lng) => {
+            update("delivery_address", val);
+            if (lat && lng) {
+              onDeliveryCoords(lat, lng);
+              onAddressBlur();
+            }
+          }}
+          placeholder="Start typing delivery address..."
           required
         />
       </div>
 
-
-      <div className="space-y-1.5">
+      {/* <div className="space-y-1.5">
         <label
           className="text-xs font-semibold uppercase tracking-wider"
           style={labelStyle}
@@ -136,7 +150,7 @@ export default function DeliveryForm({
             {zones.find((z) => z.id === form.zone_id)?.price.toLocaleString()}
           </p>
         )}
-      </div>
+      </div> */}
 
       <div className="space-y-1.5">
         <label
@@ -150,15 +164,66 @@ export default function DeliveryForm({
           value={form.rider_id}
           onChange={(e) => update("rider_id", e.target.value)}
         >
-          <option value="">Select an agent (optional)</option>
+          <option value="">Select an agent </option>
           {riders.map((r) => (
             <option key={r.id} value={r.id}>
               {r.name} — {r.vehicle_type}
             </option>
           ))}
         </select>
-      </div>
+      </div> 
+      {/* Distance + Cost display */}
+      {calculating && (
+        <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+          Calculating distance...
+        </p>
+      )}
 
+      {locationError && !calculating && (
+        <p
+          className="text-xs px-3 py-2 rounded-lg"
+          style={{
+            background: "rgba(230,57,70,0.1)",
+            color: "#E63946",
+            border: "1px solid rgba(230,57,70,0.2)",
+          }}
+        >
+          {locationError}
+        </p>
+      )}
+
+      {distance && cost && !calculating && (
+        <div
+          className="rounded-xl p-3 flex items-center justify-between"
+          style={{
+            background: "rgba(255,255,255,0.04)",
+            border: "1px solid rgba(255,255,255,0.08)",
+          }}
+        >
+          <div>
+            <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+              Distance
+            </p>
+            <p
+              className="text-sm font-bold"
+              style={{ color: "var(--text-primary)" }}
+            >
+              {distance} km
+            </p>
+          </div>
+          <div className="text-right">
+            <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+              Estimated Cost
+            </p>
+            <p
+              className="text-sm font-bold"
+              style={{ color: "var(--text-primary)" }}
+            >
+              ₦{cost.toLocaleString()}
+            </p>
+          </div>
+        </div>
+      )}
       <div className="space-y-1.5">
         <label
           className="text-xs font-semibold uppercase tracking-wider"

@@ -25,7 +25,7 @@ export default async function DashboardLayout({
     <div className="flex h-screen overflow-hidden" >
       <Sidebar companyName={company?.name ?? 'Your Company'} userEmail={user.email!} />
       <main className="flex-1 overflow-y-auto">
-        <div className="max-w-6xl mx-auto p-6 lg:p-8">
+        <div className="max-w-6xl mx-auto p-6 lg:p-2">
           {children}
         </div>
         <AIChat />

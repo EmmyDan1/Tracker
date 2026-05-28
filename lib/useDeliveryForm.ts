@@ -4,7 +4,11 @@ import { Rider, DeliveryZone } from "@/types";
 import { generateTrackingId } from "@/lib/utils";
 import { calculateDistance } from "@/lib/distance";
 
-export function useDeliveryForm(riders: Rider[], zones: DeliveryZone[], onCreated?: () => void) {
+export function useDeliveryForm(
+  riders: Rider[],
+  zones: DeliveryZone[],
+  onCreated?: () => void,
+) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState("");
   const [createdTrackingId, setCreatedTrackingId] = useState<string | null>(
@@ -16,16 +20,24 @@ export function useDeliveryForm(riders: Rider[], zones: DeliveryZone[], onCreate
   const [calculating, setCalculating] = useState(false);
   const [locationError, setLocationError] = useState("");
   const [ratePerKm, setRatePerKm] = useState(600);
+  const [pickupCoords, setPickupCoords] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
+  const [deliveryCoords, setDeliveryCoords] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
 
   const [form, setForm] = useState({
-  customer_name: '',
-  customer_phone: '',
-  pickup_address: '',
-  delivery_address: '',
-  rider_id: '',
-  notes: '',
-  zone_id: '',
-})
+    customer_name: "",
+    customer_phone: "",
+    pickup_address: "",
+    delivery_address: "",
+    rider_id: "",
+    notes: "",
+    zone_id: "",
+  });
 
   const supabase = createClient();
 
@@ -50,22 +62,24 @@ export function useDeliveryForm(riders: Rider[], zones: DeliveryZone[], onCreate
   }
 
   async function handleAddressBlur() {
-    if (!form.pickup_address || !form.delivery_address) return;
+    if (!pickupCoords || !deliveryCoords) return;
     setDistance(null);
     setCost(null);
     setLocationError("");
     setCalculating(true);
+
     const km = await calculateDistance(
-      form.pickup_address,
-      form.delivery_address,
+      pickupCoords.lat,
+      pickupCoords.lng,
+      deliveryCoords.lat,
+      deliveryCoords.lng,
     );
+
     if (km) {
       setDistance(km);
       setCost(Math.round(km * ratePerKm));
     } else {
-      setLocationError(
-        "Location not found. Check the addresses and try again.",
-      );
+      setLocationError("Could not calculate distance. Please check addresses.");
     }
     setCalculating(false);
   }
@@ -103,22 +117,22 @@ export function useDeliveryForm(riders: Rider[], zones: DeliveryZone[], onCreate
       attempts++;
     }
 
-const selectedZone = zones.find((z) => z.id === form.zone_id)
+    const selectedZone = zones.find((z) => z.id === form.zone_id);
 
-const { error: insertError } = await supabase.from('deliveries').insert({
-  tracking_id,
-  company_id: company.id,
-  customer_name: form.customer_name,
-  customer_phone: form.customer_phone,
-  pickup_address: form.pickup_address,
-  delivery_address: form.delivery_address,
-  rider_id: form.rider_id || null,
-  notes: form.notes || null,
-  status: 'pending',
-  zone_id: form.zone_id || null,
-  zone_name: selectedZone?.name || null,
-  cost: selectedZone?.price || null,
-})
+    const { error: insertError } = await supabase.from("deliveries").insert({
+      tracking_id,
+      company_id: company.id,
+      customer_name: form.customer_name,
+      customer_phone: form.customer_phone,
+      pickup_address: form.pickup_address,
+      delivery_address: form.delivery_address,
+      rider_id: form.rider_id || null,
+      notes: form.notes || null,
+      status: "pending",
+      zone_id: form.zone_id || null,
+      zone_name: selectedZone?.name || null,
+      cost: selectedZone?.price || null,
+    });
 
     if (insertError) {
       setError(insertError.message);
@@ -172,22 +186,25 @@ const { error: insertError } = await supabase.from('deliveries').insert({
     });
   }
 
-return {
-  form,
-  update,
-  error,
-  isPending,
-  createdTrackingId,
-  copied,
-  distance,
-  cost,
-  calculating,
-  locationError,
-  ratePerKm,
-  handleSubmit,
-  handleAddressBlur,
-  copyLink,
-  reset,
-}
+  return {
+    form,
+    update,
+    error,
+    isPending,
+    createdTrackingId,
+    copied,
+    distance,
+    cost,
+    calculating,
+    locationError,
+    ratePerKm,
+    handleSubmit,
+    handleAddressBlur,
+    copyLink,
+    reset,
+    setPickupCoords: (lat: number, lng: number) =>
+      setPickupCoords({ lat, lng }),
+    setDeliveryCoords: (lat: number, lng: number) =>
+      setDeliveryCoords({ lat, lng }),
   };
-
+}

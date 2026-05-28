@@ -34,6 +34,8 @@ export default function CreateDeliveryModal({
     handleAddressBlur,
     copyLink,
     reset,
+    setPickupCoords,
+    setDeliveryCoords,
   } = useDeliveryForm(riders, zones, onCreated);
 
   function closeAndReset() {
@@ -43,9 +45,9 @@ export default function CreateDeliveryModal({
 
   return (
     <>
-    <button
-  onClick={() => setOpen(true)}
-  className="
+      <button
+        onClick={() => setOpen(true)}
+        className="
     group
     relative
     inline-flex
@@ -68,13 +70,12 @@ export default function CreateDeliveryModal({
     hover:bg-zinc-800
     hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)]
   "
->
-  New Delivery
-
-  <span className="ml-2 text-white/50 group-hover:text-white/80 transition">
-    →
-  </span>
-</button>
+      >
+        New Delivery
+        <span className="ml-2 text-white/50 group-hover:text-white/80 transition">
+          →
+        </span>
+      </button>
 
       {open && (
         <div
@@ -136,6 +137,8 @@ export default function CreateDeliveryModal({
                 locationError={locationError}
                 distance={distance}
                 cost={cost}
+                onPickupCoords={(lat, lng) => setPickupCoords(lat, lng)}
+                onDeliveryCoords={(lat, lng) => setDeliveryCoords(lat, lng)}
               />
             )}
           </div>
