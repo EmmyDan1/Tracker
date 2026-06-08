@@ -5,15 +5,14 @@ export async function calculateDistance(
   deliveryLng: number
 ): Promise<number | null> {
   try {
-    const url = `https://router.project-osrm.org/route/v1/driving/${pickupLng},${pickupLat};${deliveryLng},${deliveryLat}?overview=false`
+    const origins = `${pickupLat},${pickupLng}`
+    const destinations = `${deliveryLat},${deliveryLng}`
 
-    const res = await fetch(url)
+    const res = await fetch(
+      `/api/distance?origins=${origins}&destinations=${destinations}`
+    )
     const data = await res.json()
-
-    if (!data.routes?.[0]?.distance) return null
-
-    const km = Math.round((data.routes[0].distance / 1000) * 10) / 10
-    return km
+    return data.km ?? null
   } catch {
     return null
   }

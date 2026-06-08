@@ -1,11 +1,14 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 
-interface Suggestion {
-  display_name: string
-  lat: string
-  lon: string
+interface Prediction {
+  place_id: string
+  description: string
+  structured_formatting: {
+    main_text: string
+    secondary_text: string
+  }
 }
 
 interface Props {
@@ -23,61 +26,62 @@ export default function AddressAutocomplete({
   placeholder,
   required,
 }: Props) {
-  const [suggestions, setSuggestions] = useState<Suggestion[]>([])
-  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [predictions, setPredictions] = useState<Prediction[]>([])
+  const [showPredictions, setShowPredictions] = useState(false)
   const [loading, setLoading] = useState(false)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  async function fetchSuggestions(query: string) {
-    if (query.length < 3) {
-      setSuggestions([])
+  async function fetchPredictions(input: string) {
+    if (input.length < 3) {
+      setPredictions([])
       return
     }
 
     setLoading(true)
     try {
-      const encoded = encodeURIComponent(query + ' Ibadan Nigeria')
       const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${encoded}&format=json&limit=5&countrycodes=ng&viewbox=3.7,7.6,4.1,7.0&bounded=0`,
-        {
-          headers: {
-            'Accept-Language': 'en',
-            'User-Agent': 'ShippaLogistics/1.0',
-          },
-        }
+        `/api/places/autocomplete?input=${encodeURIComponent(input)}`
       )
       const data = await res.json()
-      setSuggestions(data ?? [])
-      setShowSuggestions(true)
+      setPredictions(data.predictions ?? [])
+      setShowPredictions(true)
     } catch {
-      setSuggestions([])
+      setPredictions([])
     }
     setLoading(false)
   }
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const val = e.target.value
-    onChange(val)
-    if (debounceRef.current) clearTimeout(debounceRef.current)
-    debounceRef.current = setTimeout(() => fetchSuggestions(val), 400)
-  }
+  async function handleSelect(prediction: Prediction) {
+    setShowPredictions(false)
+    setPredictions([])
 
-  function handleSelect(suggestion: Suggestion) {
-    onChange(
-      suggestion.display_name,
-      parseFloat(suggestion.lat),
-      parseFloat(suggestion.lon)
-    )
-    setSuggestions([])
-    setShowSuggestions(false)
+    try {
+      const res = await fetch(
+        `/api/places/details?placeId=${prediction.place_id}`
+      )
+      const data = await res.json()
+
+      if (data.result) {
+        const lat = data.result.geometry.location.lat
+        const lng = data.result.geometry.location.lng
+        onChange(data.result.formatted_address, lat, lng)
+      } else {
+        onChange(prediction.description)
+      }
+    } catch {
+      onChange(prediction.description)
+    }
+
     if (onBlur) onBlur()
   }
 
-  function handleBlur() {
-    setTimeout(() => {
-      setShowSuggestions(false)
-      if (onBlur) onBlur()
-    }, 200)
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    onChange(e.target.value)
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(
+      () => fetchPredictions(e.target.value),
+      350
+    )
   }
 
   return (
@@ -87,8 +91,8 @@ export default function AddressAutocomplete({
         placeholder={placeholder}
         value={value}
         onChange={handleChange}
-        onBlur={handleBlur}
-        onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+        onBlur={() => setTimeout(() => setShowPredictions(false), 200)}
+        onFocus={() => predictions.length > 0 && setShowPredictions(true)}
         required={required}
         autoComplete="off"
       />
@@ -102,7 +106,7 @@ export default function AddressAutocomplete({
         </p>
       )}
 
-      {showSuggestions && suggestions.length > 0 && (
+      {showPredictions && predictions.length > 0 && (
         <div
           className="absolute z-50 w-full mt-1 rounded-xl overflow-hidden"
           style={{
@@ -111,13 +115,15 @@ export default function AddressAutocomplete({
             boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
           }}
         >
-          {suggestions.map((s, i) => (
+          {predictions.map((p) => (
             <button
-              key={i}
+              key={p.place_id}
               type="button"
-              className="w-full text-left px-4 py-3 text-sm transition-colors"
-              style={{ color: 'var(--text-primary)' }}
-              onMouseDown={() => handleSelect(s)}
+              className="w-full text-left px-4 py-3 transition-colors border-b last:border-0"
+              style={{
+                borderColor: 'rgba(255,255,255,0.05)',
+              }}
+              onMouseDown={() => handleSelect(p)}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = 'rgba(255,255,255,0.06)'
               }}
@@ -126,16 +132,16 @@ export default function AddressAutocomplete({
               }}
             >
               <p
-                className="font-medium text-xs truncate"
+                className="text-xs font-medium truncate"
                 style={{ color: '#ffffff' }}
               >
-                {s.display_name.split(',')[0]}
+                {p.structured_formatting.main_text}
               </p>
               <p
                 className="text-xs truncate mt-0.5"
                 style={{ color: 'rgba(255,255,255,0.4)' }}
               >
-                {s.display_name.split(',').slice(1, 3).join(',')}
+                {p.structured_formatting.secondary_text}
               </p>
             </button>
           ))}
