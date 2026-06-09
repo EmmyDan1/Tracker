@@ -91,7 +91,7 @@ export default function AddressAutocomplete({
         placeholder={placeholder}
         value={value}
         onChange={handleChange}
-        onBlur={() => setTimeout(() => setShowPredictions(false), 200)}
+        onBlur={() => setTimeout(() => setShowPredictions(false), 500)}
         onFocus={() => predictions.length > 0 && setShowPredictions(true)}
         required={required}
         autoComplete="off"
