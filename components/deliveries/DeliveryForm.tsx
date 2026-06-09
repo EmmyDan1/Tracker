@@ -121,6 +121,28 @@ export default function DeliveryForm({
           required
         />
       </div>
+      <div>
+        <label
+          className="text-xs font-semibold uppercase tracking-wider"
+          style={labelStyle}
+        >
+          Assign Rider
+        </label>
+        <select
+          className="input-base"
+          value={form.rider_id}
+          onChange={(e) => update("rider_id", e.target.value)}
+          required
+        >
+          <option value="">Select a rider</option>
+          {riders.map((r) => (
+            <option key={r.id} value={r.id}>
+             {r.name} — {r.vehicle_type}
+            </option> 
+          ))}
+        </select>
+      </div>
+      
 
       {/* Distance + Cost display */}
       {calculating && (
