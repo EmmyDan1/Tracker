@@ -84,6 +84,8 @@ export function useDeliveryForm(
     setCalculating(false);
   }
 
+  
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
@@ -205,9 +207,36 @@ export function useDeliveryForm(
     handleAddressBlur,
     copyLink,
     reset,
-    setPickupCoords: (lat: number, lng: number) =>
-      setPickupCoords({ lat, lng }),
-    setDeliveryCoords: (lat: number, lng: number) =>
-      setDeliveryCoords({ lat, lng }),
+setPickupCoords: (lat: number, lng: number) => {
+  setPickupCoords({ lat, lng })
+},
+setDeliveryCoords: async (lat: number, lng: number) => {
+  const newDeliveryCoords = { lat, lng }
+  setDeliveryCoords(newDeliveryCoords)
+
+  // Trigger immediately when delivery coords set
+  const currentPickup = pickupCoords
+  if (!currentPickup) return
+
+  setDistance(null)
+  setCost(null)
+  setLocationError('')
+  setCalculating(true)
+
+  const km = await calculateDistance(
+    currentPickup.lat,
+    currentPickup.lng,
+    lat,
+    lng
+  )
+
+  if (km) {
+    setDistance(km)
+    setCost(Math.round(km * ratePerKm))
+  } else {
+    setLocationError('Could not calculate distance.')
+  }
+  setCalculating(false)
+},
   };
 }

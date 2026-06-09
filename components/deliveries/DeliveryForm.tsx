@@ -122,56 +122,6 @@ export default function DeliveryForm({
         />
       </div>
 
-      {/* <div className="space-y-1.5">
-        <label
-          className="text-xs font-semibold uppercase tracking-wider"
-          style={labelStyle}
-        >
-          Delivery Zone
-        </label>
-        <select
-          className="input-base"
-          value={form.zone_id}
-          onChange={(e) => update("zone_id", e.target.value)}
-        >
-          <option value="">Select a zone (optional)</option>
-          {zones.map((z) => (
-            <option key={z.id} value={z.id}>
-              {z.name} — ₦{z.price.toLocaleString()}
-            </option>
-          ))}
-        </select>
-        {form.zone_id && zones.find((z) => z.id === form.zone_id) && (
-          <p
-            className="text-xs font-semibold"
-            style={{ color: "var(--text-primary)" }}
-          >
-            Cost: ₦
-            {zones.find((z) => z.id === form.zone_id)?.price.toLocaleString()}
-          </p>
-        )}
-      </div> 
-
-      <div className="space-y-1.5">
-        <label
-          className="text-xs font-semibold uppercase tracking-wider"
-          style={labelStyle}
-        >
-          Assign Agent
-        </label>
-        <select
-          className="input-base"
-          value={form.rider_id}
-          onChange={(e) => update("rider_id", e.target.value)}
-        >
-          <option value="">Select an agent </option>
-          {riders.map((r) => (
-            <option key={r.id} value={r.id}>
-              {r.name} — {r.vehicle_type}
-            </option>
-          ))}
-        </select>
-      </div> 
       {/* Distance + Cost display */}
       {calculating && (
         <p className="text-xs" style={{ color: "var(--text-muted)" }}>
@@ -264,9 +214,19 @@ export default function DeliveryForm({
         <button
           type="submit"
           className="btn-primary flex-1 justify-center"
-          disabled={isPending}
+          disabled={isPending || calculating || !cost}
+          style={{
+            opacity: !cost || calculating ? 0.5 : 1,
+            cursor: !cost || calculating ? "not-allowed" : "pointer",
+          }}
         >
-          {isPending ? "Creating..." : "Create Delivery"}
+          {calculating
+            ? "Calculating cost..."
+            : !cost
+              ? "Select addresses first"
+              : isPending
+                ? "Creating..."
+                : "Create Delivery"}
         </button>
       </div>
     </form>
