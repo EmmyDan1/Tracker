@@ -91,7 +91,7 @@ ${
     ?.map(
       (d: DeliverySummary) =>
         `- ${d.tracking_id}: ${d.customer_name} | ${d.status} | From: ${d.pickup_address} → ${d.delivery_address} | Agent: ${
-          d.riders?.map((r: Rider) => r.name).join(", ") ?? "Unassigned"
+          Array.isArray(d.riders) ? d.riders.map((r: Rider) => r.name).join(", ") : "Unassigned"
         }`,
     )
     .join("\n") ?? "None"
@@ -106,7 +106,7 @@ If asked something outside your data, say you don't have that information.`;
     const messages = [...history, { role: "user" as const, content: message }];
 
     const completion = await groq.chat.completions.create({
-      model: 'llama3-8b-8192',
+      model: 'llama-3.3-70b-versatile',
       max_tokens: 300,
       messages: [{ role: "system", content: systemPrompt }, ...messages],
     });
