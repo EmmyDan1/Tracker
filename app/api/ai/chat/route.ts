@@ -18,7 +18,6 @@ type DeliverySummary = {
 
 export async function POST(request: NextRequest) {
   try {
-
     const groq = new Groq({
       apiKey: process.env.GROQ_API_KEY,
     });
@@ -27,7 +26,7 @@ export async function POST(request: NextRequest) {
       console.error("GROQ_API_KEY is missing");
       return NextResponse.json(
         { error: "Server configuration error" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -91,7 +90,9 @@ ${
     ?.map(
       (d: DeliverySummary) =>
         `- ${d.tracking_id}: ${d.customer_name} | ${d.status} | From: ${d.pickup_address} → ${d.delivery_address} | Agent: ${
-          Array.isArray(d.riders) ? d.riders.map((r: Rider) => r.name).join(", ") : "Unassigned"
+          Array.isArray(d.riders)
+            ? d.riders.map((r: Rider) => r.name).join(", ")
+            : "Unassigned"
         }`,
     )
     .join("\n") ?? "None"
@@ -106,7 +107,7 @@ If asked something outside your data, say you don't have that information.`;
     const messages = [...history, { role: "user" as const, content: message }];
 
     const completion = await groq.chat.completions.create({
-      model: 'llama-3.3-70b-versatile',
+      model: "groq/compound",
       max_tokens: 300,
       messages: [{ role: "system", content: systemPrompt }, ...messages],
     });
