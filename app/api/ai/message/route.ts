@@ -2,12 +2,18 @@ import { NextRequest, NextResponse } from 'next/server'
 import Groq from 'groq-sdk'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY!,
-})
-
 export async function POST(request: NextRequest) {
   try {
+    // Initialize Groq INSIDE the handler
+    const groq = new Groq({
+      apiKey: process.env.GROQ_API_KEY,
+    })
+
+    if (!process.env.GROQ_API_KEY) {
+      console.error('GROQ_API_KEY is missing')
+      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 })
+    }
+
     const { trackingId } = await request.json()
 
     const supabase = await createServerSupabaseClient()

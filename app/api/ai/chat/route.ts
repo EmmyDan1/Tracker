@@ -2,10 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import Groq from "groq-sdk";
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY!,
-});
-
 type Rider = {
   name: string;
 };
@@ -22,6 +18,19 @@ type DeliverySummary = {
 
 export async function POST(request: NextRequest) {
   try {
+
+    const groq = new Groq({
+      apiKey: process.env.GROQ_API_KEY,
+    });
+
+    if (!process.env.GROQ_API_KEY) {
+      console.error("GROQ_API_KEY is missing");
+      return NextResponse.json(
+        { error: "Server configuration error" },
+        { status: 500 }
+      );
+    }
+
     const { message, history } = await request.json();
 
     const supabase = await createServerSupabaseClient();
@@ -78,13 +87,11 @@ ${riders?.map((r) => `- ${r.name} (${r.vehicle_type}) - ${r.is_active ? "Active"
 
 RECENT DELIVERIES (last 50):
 ${
-  deliveries
+  (deliveries as DeliverySummary[] | null)
     ?.map(
       (d: DeliverySummary) =>
         `- ${d.tracking_id}: ${d.customer_name} | ${d.status} | From: ${d.pickup_address} → ${d.delivery_address} | Agent: ${
-          Array.isArray(d.riders)
-            ? d.riders.map((r) => r.name).join(", ")
-            : "Unassigned"
+          d.riders?.map((r: Rider) => r.name).join(", ") ?? "Unassigned"
         }`,
     )
     .join("\n") ?? "None"
