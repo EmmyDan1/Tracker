@@ -99,7 +99,7 @@ If asked something outside your data, say you don't have that information.`;
     const messages = [...history, { role: "user" as const, content: message }];
 
     const completion = await groq.chat.completions.create({
-     model: 'llama3-8b-8192',
+      model: "llama3-8b-8192",
       max_tokens: 300,
       messages: [{ role: "system", content: systemPrompt }, ...messages],
     });
